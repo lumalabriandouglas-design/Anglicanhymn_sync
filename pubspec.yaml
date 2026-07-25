@@ -1,0 +1,34 @@
+name: anglican_hymn_sync
+description: "A modern Anglican Hymnal App"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
+
+# Automatically generates phone launcher icons for Android, iOS, and Web
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/app_icon.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/images/app_icon.png"
+    background_color: "#0B132B"
+    theme_color: "#0B132B"
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/hymns-full.json
+    - assets/images/app_icon.png
