@@ -9,6 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.1.2
+  shared_preferences: ^2.2.2
+  just_audio: ^0.9.36
+  audio_service: ^0.18.12
+  google_fonts: ^6.1.0
+  wakelock_plus: ^1.1.4
+  mobile_scanner: ^6.0.0  # Or run: flutter pub upgrade mobile_scanner
 
 dev_dependencies:
   flutter_test:
