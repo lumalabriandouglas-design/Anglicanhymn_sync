@@ -17,38 +17,46 @@ class HymnTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final titleColor = isDark ? AppColors.textWhite : AppColors.lightTextPrimary;
+    final subtitleColor = isDark ? AppColors.textGrey : AppColors.lightTextSecondary;
+    final numberBg = isDark
+        ? AppColors.celestialGold.withOpacity(0.15)
+        : AppColors.celestialGold.withOpacity(0.18);
+
     final lyricPreview = hymn.lyricsLuganda.split('\n').firstWhere(
           (line) => line.trim().isNotEmpty,
           orElse: () => 'Tap to view hymn lyrics',
         );
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 10),
+      elevation: isDark ? 2 : 1,
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
         leading: Container(
-          width: 44,
-          height: 44,
+          width: 46,
+          height: 46,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: AppColors.celestialGold.withOpacity(0.12),
-            borderRadius: BorderRadius.circular(10),
+            color: numberBg,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Text(
             hymn.number,
             style: const TextStyle(
-              color: AppColors.celestialGold,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
+              color: AppColors.primaryNavy,
+              fontWeight: FontWeight.w800,
+              fontSize: 15,
             ),
           ),
         ),
         title: Text(
           hymn.title,
-          style: const TextStyle(
-            fontWeight: FontWeight.w600,
-            fontSize: 15,
-            color: AppColors.textWhite,
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            fontSize: 15.5,
+            color: titleColor,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -57,13 +65,17 @@ class HymnTile extends StatelessWidget {
           lyricPreview,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: AppColors.textGrey,
-            fontSize: 12,
+          style: TextStyle(
+            color: subtitleColor,
+            fontSize: 12.5,
           ),
         ),
         trailing: IconButton(
-          icon: const Icon(Icons.play_circle_outline_rounded, color: AppColors.celestialGold),
+          icon: Icon(
+            Icons.play_circle_outline_rounded,
+            color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+            size: 28,
+          ),
           onPressed: onPlayTap,
         ),
         onTap: onTap ??

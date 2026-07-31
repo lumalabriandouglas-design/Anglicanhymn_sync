@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
 import '../core/services/storage_service.dart';
-import '../core/utils/data_cleaner.dart';
 import '../core/utils/search_engine.dart';
 import '../models/hymn.dart';
 
@@ -13,10 +12,12 @@ class HymnProvider extends ChangeNotifier {
   List<Hymn> _allHymns = [];
   String _searchQuery = '';
   bool _isLoading = true;
+  String? _errorMessage;
 
   HymnProvider(this._storageService);
 
   bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
   List<Hymn> get allHymns => _allHymns;
   String get searchQuery => _searchQuery;
 
@@ -35,6 +36,7 @@ class HymnProvider extends ChangeNotifier {
   /// Loads JSON asset database and applies stored favorites
   Future<void> loadHymns() async {
     _isLoading = true;
+    _errorMessage = null;
     notifyListeners();
 
     try {
@@ -44,14 +46,17 @@ class HymnProvider extends ChangeNotifier {
       final List<String> favoriteIds = _storageService.getFavorites();
 
       _allHymns = data.asMap().entries.map((entry) {
-        final hymn = Hymn.fromJson(entry.value as Map<String, dynamic>, entry.key);
+        final hymn =
+            Hymn.fromJson(entry.value as Map<String, dynamic>, entry.key);
         if (favoriteIds.contains(hymn.number)) {
           hymn.isFavorite = true;
         }
         return hymn;
       }).toList();
     } catch (e) {
+      _errorMessage = 'Failed to load hymn book. Please check the data file.';
       debugPrint('Error loading hymns database: $e');
+      _allHymns = [];
     } finally {
       _isLoading = false;
       notifyListeners();

@@ -10,12 +10,27 @@ class AnglicanHymnSyncApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.watch<SettingsProvider>();
+    final settings = context.watch<SettingsProvider>();
+
+    ThemeMode themeMode;
+    switch (settings.themeMode) {
+      case AppThemeMode.light:
+        themeMode = ThemeMode.light;
+        break;
+      case AppThemeMode.dark:
+        themeMode = ThemeMode.dark;
+        break;
+      case AppThemeMode.system:
+        themeMode = ThemeMode.system;
+        break;
+    }
 
     return MaterialApp(
       title: 'Anglican Hymn Sync',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
       home: const MainNavigationWrapper(),
     );
   }

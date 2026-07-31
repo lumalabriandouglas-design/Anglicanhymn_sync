@@ -5,56 +5,74 @@ import '../constants/app_colors.dart';
 class VerseParser {
   static Widget buildFormattedLyrics(String rawLyrics, double fontSize) {
     if (rawLyrics.trim().isEmpty) {
-      return const Center(
-        child: Text('Lyrics not available.', style: TextStyle(color: AppColors.textGrey)),
+      return Center(
+        child: Text(
+          'Lyrics not available.',
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontSize: fontSize - 2,
+          ),
+        ),
       );
     }
 
-    // Split text into stanzas separated by double line breaks
     final stanzas = rawLyrics.split(RegExp(r'\n\s*\n'));
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: stanzas.map((stanza) {
-        final trimmed = stanza.trim();
-        final isChorus = trimmed.toLowerCase().startsWith('chorus') || 
-                         trimmed.toLowerCase().startsWith('ekyitiriddwa');
+    return Builder(
+      builder: (context) {
+        final isDark = Theme.of(context).brightness == Brightness.dark;
+        final textColor =
+            isDark ? AppColors.textWhite : AppColors.lightTextPrimary;
+        final chorusBg = isDark
+            ? AppColors.surfaceLight.withOpacity(0.4)
+            : AppColors.celestialGold.withOpacity(0.13);
 
-        if (isChorus) {
-          return Container(
-            margin: const EdgeInsets.symmetric(vertical: 12),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceLight.withOpacity(0.4),
-              borderRadius: BorderRadius.circular(10),
-              border: const Border(
-                left: BorderSide(color: AppColors.celestialGold, width: 3),
-              ),
-            ),
-            child: Text(
-              trimmed,
-              style: GoogleFonts.lora(
-                color: AppColors.textWhite,
-                fontSize: fontSize,
-                fontStyle: FontStyle.italic,
-                height: 1.6,
-              ),
-            ),
-          );
-        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: stanzas.map((stanza) {
+            final trimmed = stanza.trim();
+            final isChorus = trimmed.toLowerCase().startsWith('chorus') ||
+                trimmed.toLowerCase().startsWith('ekyitiriddwa');
 
-        return Padding(
-          padding: const EdgeInsets.only(bottom: 20.0),
-          child: Text(
-            trimmed,
-            style: GoogleFonts.lora(
-              color: AppColors.textWhite,
-              fontSize: fontSize,
-              height: 1.6,
-            ),
-          ),
+            if (isChorus) {
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 12),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: chorusBg,
+                  borderRadius: BorderRadius.circular(10),
+                  border: const Border(
+                    left: BorderSide(color: AppColors.celestialGold, width: 3),
+                  ),
+                ),
+                child: Text(
+                  trimmed,
+                  style: GoogleFonts.lora(
+                    color: textColor,
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w700, // thick
+                    fontStyle: FontStyle.italic,
+                    height: 1.65,
+                  ),
+                ),
+              );
+            }
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 20.0),
+              child: Text(
+                trimmed,
+                style: GoogleFonts.lora(
+                  color: textColor,
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w700, // thick
+                  height: 1.65,
+                ),
+              ),
+            );
+          }).toList(),
         );
-      }).toList(),
+      },
     );
   }
 }

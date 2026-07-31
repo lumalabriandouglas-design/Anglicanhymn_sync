@@ -14,9 +14,9 @@ class MoreBottomSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: AppColors.cardNavy,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -28,28 +28,32 @@ class MoreBottomSheet extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.only(bottom: 20),
               decoration: BoxDecoration(
-                color: AppColors.textGrey.withOpacity(0.4),
+                color: Colors.grey.withOpacity(0.4),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
-          const Text(
+          Text(
             'Settings & Tools',
             style: TextStyle(
-              color: AppColors.celestialGold,
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 16),
 
-          // 1. Service Setlists Manager
+          // 1. Service Setlists
           ListTile(
             contentPadding: EdgeInsets.zero,
-            leading: const Icon(Icons.playlist_add_check_rounded, color: AppColors.celestialGold),
-            title: const Text('Service Setlists', style: TextStyle(color: AppColors.textWhite)),
-            subtitle: const Text('Plan order of hymns for Sunday service', style: TextStyle(color: AppColors.textGrey, fontSize: 12)),
-            trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textGrey),
+            leading: Icon(Icons.playlist_add_check_rounded,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('Service Setlists'),
+            subtitle: const Text(
+              'Plan order of hymns for Sunday service',
+              style: TextStyle(fontSize: 12),
+            ),
+            trailing: const Icon(Icons.chevron_right_rounded),
             onTap: () {
               Navigator.pop(context);
               Navigator.push(
@@ -58,42 +62,86 @@ class MoreBottomSheet extends StatelessWidget {
               );
             },
           ),
-          const Divider(color: AppColors.surfaceLight),
+          const Divider(),
 
-          // 2. Dark/Light Theme Toggle
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            secondary: Icon(
-              settings.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-              color: AppColors.celestialGold,
-            ),
-            title: const Text('Dark Mode', style: TextStyle(color: AppColors.textWhite)),
-            value: settings.isDarkMode,
-            activeColor: AppColors.celestialGold,
-            onChanged: (_) => settings.toggleTheme(),
+          // 2. Theme Mode
+          const Text('Theme', style: TextStyle(fontSize: 13, color: Colors.grey)),
+          const SizedBox(height: 8),
+          SegmentedButton<AppThemeMode>(
+            segments: const [
+              ButtonSegment(
+                value: AppThemeMode.light,
+                label: Text('Light'),
+                icon: Icon(Icons.light_mode_rounded, size: 18),
+              ),
+              ButtonSegment(
+                value: AppThemeMode.dark,
+                label: Text('Dark'),
+                icon: Icon(Icons.dark_mode_rounded, size: 18),
+              ),
+              ButtonSegment(
+                value: AppThemeMode.system,
+                label: Text('System'),
+                icon: Icon(Icons.brightness_auto_rounded, size: 18),
+              ),
+            ],
+            selected: {settings.themeMode},
+            onSelectionChanged: (Set<AppThemeMode> selected) {
+              settings.setThemeMode(selected.first);
+            },
           ),
+          const SizedBox(height: 20),
 
-          // 3. PRO Mode Toggle
+          // 3. Lyrics Language
+          const Text('Default Lyrics Language',
+              style: TextStyle(fontSize: 13, color: Colors.grey)),
+          const SizedBox(height: 8),
+          SegmentedButton<LyricsLanguage>(
+            segments: const [
+              ButtonSegment(
+                value: LyricsLanguage.luganda,
+                label: Text('Luganda'),
+              ),
+              ButtonSegment(
+                value: LyricsLanguage.english,
+                label: Text('English'),
+              ),
+              ButtonSegment(
+                value: LyricsLanguage.both,
+                label: Text('Both'),
+              ),
+            ],
+            selected: {settings.lyricsLanguage},
+            onSelectionChanged: (Set<LyricsLanguage> selected) {
+              settings.setLyricsLanguage(selected.first);
+            },
+          ),
+          const SizedBox(height: 20),
+
+          // 4. PRO Mode
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            secondary: const Icon(Icons.workspace_premium_rounded, color: AppColors.celestialGold),
-            title: const Text('PRO Mode Access', style: TextStyle(color: AppColors.textWhite)),
-            subtitle: const Text('Unlocks auto-scroll & speed modifiers', style: TextStyle(color: AppColors.textGrey, fontSize: 12)),
+            secondary: Icon(Icons.workspace_premium_rounded,
+                color: Theme.of(context).colorScheme.primary),
+            title: const Text('PRO Mode Access'),
+            subtitle: const Text(
+              'Unlocks auto-scroll & speed modifiers',
+              style: TextStyle(fontSize: 12),
+            ),
             value: settings.isProUser,
-            activeColor: AppColors.celestialGold,
             onChanged: (_) => settings.toggleProUser(),
           ),
+          const Divider(),
 
-          const Divider(color: AppColors.surfaceLight),
-
-          // 4. Text Scaling
-          const Text('Reader Font Size', style: TextStyle(color: AppColors.textGrey, fontSize: 13)),
+          // 5. Font Size
+          const Text('Reader Font Size',
+              style: TextStyle(fontSize: 13, color: Colors.grey)),
           Slider(
             value: settings.fontSize,
             min: 14.0,
             max: 28.0,
-            activeColor: AppColors.celestialGold,
-            inactiveColor: AppColors.surfaceLight,
+            divisions: 14,
+            label: settings.fontSize.round().toString(),
             onChanged: (val) => settings.setFontSize(val),
           ),
         ],

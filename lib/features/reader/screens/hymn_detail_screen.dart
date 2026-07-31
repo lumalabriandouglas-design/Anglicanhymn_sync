@@ -128,10 +128,11 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
         children: [
           Expanded(
             child: DualLyricsView(
-              lyricsLuganda: widget.hymn.lyricsLuganda,
-              lyricsEnglish: widget.hymn.lyricsEnglish,
-              fontSize: settings.fontSize,
-              scrollController: _scrollController,
+  lyricsLuganda: widget.hymn.lyricsLuganda,
+  lyricsEnglish: widget.hymn.lyricsEnglish,
+  fontSize: settings.fontSize,
+  language: settings.lyricsLanguage,   // ← add this
+  scrollController: _scrollController,
             ),
           ),
           Container(
