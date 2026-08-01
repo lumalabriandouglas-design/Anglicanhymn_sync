@@ -92,33 +92,7 @@ class MoreBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 20),
 
-          // 3. Lyrics Language
-          const Text('Default Lyrics Language',
-              style: TextStyle(fontSize: 13, color: Colors.grey)),
-          const SizedBox(height: 8),
-          SegmentedButton<LyricsLanguage>(
-            segments: const [
-              ButtonSegment(
-                value: LyricsLanguage.luganda,
-                label: Text('Luganda'),
-              ),
-              ButtonSegment(
-                value: LyricsLanguage.english,
-                label: Text('English'),
-              ),
-              ButtonSegment(
-                value: LyricsLanguage.both,
-                label: Text('Both'),
-              ),
-            ],
-            selected: {settings.lyricsLanguage},
-            onSelectionChanged: (Set<LyricsLanguage> selected) {
-              settings.setLyricsLanguage(selected.first);
-            },
-          ),
-          const SizedBox(height: 20),
-
-          // 4. PRO Mode
+          // 3. PRO Mode
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
             secondary: Icon(Icons.workspace_premium_rounded,
@@ -133,7 +107,7 @@ class MoreBottomSheet extends StatelessWidget {
           ),
           const Divider(),
 
-          // 5. Font Size
+          // 4. Font Size
           const Text('Reader Font Size',
               style: TextStyle(fontSize: 13, color: Colors.grey)),
           Slider(

@@ -25,123 +25,102 @@ class DualLyricsView extends StatefulWidget {
 }
 
 class _DualLyricsViewState extends State<DualLyricsView> {
-  late int _selectedLanguageIndex;
+  late PageController _pageController;
+  late int _currentPage; // 0 = Luganda, 1 = English, 2 = Both
 
   @override
   void initState() {
     super.initState();
-    // Respect the global setting when the screen opens
     switch (widget.language) {
       case LyricsLanguage.luganda:
-        _selectedLanguageIndex = 0;
+        _currentPage = 0;
         break;
       case LyricsLanguage.english:
-        _selectedLanguageIndex = 1;
+        _currentPage = 1;
         break;
       case LyricsLanguage.both:
-        _selectedLanguageIndex = 0; // default to Luganda first when "Both"
+        _currentPage = 2;
         break;
     }
+    _pageController = PageController(initialPage: _currentPage == 2 ? 0 : _currentPage);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final bool showBoth = widget.language == LyricsLanguage.both;
     final bool hasEnglish = widget.lyricsEnglish.trim().isNotEmpty;
 
     return ResponsiveCenter(
       child: Column(
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: 10),
 
-          // Language switcher (only show if English exists)
+          // Language pills
           if (hasEnglish)
             Container(
-              width: showBoth ? 280 : 220,
-              height: 38,
+              width: 270,
+              height: 40,
               decoration: BoxDecoration(
                 color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(22),
+                border: Border.all(color: Colors.grey.withOpacity(0.2)),
               ),
               child: Row(
                 children: [
-                  _buildPillOption('Luganda', 0),
-                  _buildPillOption('English', 1),
-                  if (showBoth) _buildPillOption('Both', 2),
+                  _buildPill('Luganda', 0),
+                  _buildPill('English', 1),
+                  _buildPill('Both', 2),
                 ],
               ),
             ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
+          // Content
           Expanded(
-            child: SingleChildScrollView(
-              controller: widget.scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: _buildLyricsContent(),
-            ),
+            child: _currentPage == 2
+                ? _buildSideBySide()
+                : PageView(
+                    controller: _pageController,
+                    onPageChanged: (index) {
+                      setState(() => _currentPage = index);
+                    },
+                    children: [
+                      _buildSingleLanguage(widget.lyricsLuganda),
+                      _buildSingleLanguage(widget.lyricsEnglish),
+                    ],
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildLyricsContent() {
-    // Both mode
-    if (_selectedLanguageIndex == 2) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Luganda',
-            style: TextStyle(
-              fontSize: widget.fontSize - 2,
-              fontWeight: FontWeight.bold,
-              color: AppColors.celestialGold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          VerseParser.buildFormattedLyrics(
-            widget.lyricsLuganda,
-            widget.fontSize,
-          ),
-          const SizedBox(height: 28),
-          Text(
-            'English',
-            style: TextStyle(
-              fontSize: widget.fontSize - 2,
-              fontWeight: FontWeight.bold,
-              color: AppColors.celestialGold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          VerseParser.buildFormattedLyrics(
-            widget.lyricsEnglish,
-            widget.fontSize,
-          ),
-        ],
-      );
-    }
-
-    // Single language
-    final lyrics = _selectedLanguageIndex == 0
-        ? widget.lyricsLuganda
-        : widget.lyricsEnglish;
-
-    return VerseParser.buildFormattedLyrics(lyrics, widget.fontSize);
-  }
-
-  Widget _buildPillOption(String label, int index) {
-    final isSelected = _selectedLanguageIndex == index;
+  Widget _buildPill(String label, int index) {
+    final isSelected = _currentPage == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedLanguageIndex = index),
+        onTap: () {
+          setState(() => _currentPage = index);
+          if (index < 2) {
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+            );
+          }
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: isSelected ? AppColors.celestialGold : Colors.transparent,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(22),
           ),
           child: Text(
             label,
@@ -149,12 +128,87 @@ class _DualLyricsViewState extends State<DualLyricsView> {
               color: isSelected
                   ? AppColors.primaryNavy
                   : Theme.of(context).textTheme.bodyMedium?.color,
-              fontWeight: FontWeight.bold,
-              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              fontSize: 13.5,
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSingleLanguage(String lyrics) {
+    return SingleChildScrollView(
+      controller: widget.scrollController,
+      padding: const EdgeInsets.fromLTRB(22, 8, 22, 30),
+      child: VerseParser.buildFormattedLyrics(lyrics, widget.fontSize),
+    );
+  }
+
+  /// Improved side-by-side layout
+  Widget _buildSideBySide() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Luganda column
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                right: BorderSide(color: Colors.grey.withOpacity(0.25), width: 1),
+              ),
+            ),
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 4, 12, 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Luganda',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.celestialGold,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  VerseParser.buildFormattedLyrics(
+                    widget.lyricsLuganda,
+                    widget.fontSize - 1.5,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+
+        // English column
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(12, 4, 16, 30),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'English',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.celestialGold,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                VerseParser.buildFormattedLyrics(
+                  widget.lyricsEnglish,
+                  widget.fontSize - 1.5,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

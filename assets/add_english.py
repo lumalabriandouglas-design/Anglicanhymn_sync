@@ -4,8 +4,7 @@ import json
 with open('assets/hymns-full.json', 'r', encoding='utf-8') as f:
     hymns = json.load(f)
 
-# 2. English data mapped by hymn number (n)
-# Add more as we find them
+# 2. All English data
 english_data = {
     1: {
         "titleEnglish": "Awake, my soul, and with the sun",
@@ -18,6 +17,10 @@ english_data = {
     18: {
         "titleEnglish": "Abide with me",
         "lyricsEnglish": "Abide with me; fast falls the eventide;\nThe darkness deepens; Lord, with me abide.\nWhen other helpers fail and comforts flee,\nHelp of the helpless, O abide with me.\n\nSwift to its close ebbs out life's little day;\nEarth's joys grow dim; its glories pass away;\nChange and decay in all around I see;\nO Thou who changest not, abide with me.\n\nI need Thy presence every passing hour.\nWhat but Thy grace can foil the tempter's power?\nWho, like Thyself, my guide and stay can be?\nThrough cloud and sunshine, Lord, abide with me.\n\nI fear no foe, with Thee at hand to bless;\nIlls have no weight, and tears no bitterness.\nWhere is death's sting? Where, grave, thy victory?\nI triumph still, if Thou abide with me.\n\nHold Thou Thy cross before my closing eyes;\nShine through the gloom and point me to the skies.\nHeaven's morning breaks, and earth's vain shadows flee;\nIn life, in death, O Lord, abide with me."
+    },
+    34: {
+        "titleEnglish": "O come, all ye faithful",
+        "lyricsEnglish": "O come, all ye faithful, joyful and triumphant!\nO come ye, O come ye to Bethlehem;\nCome and behold him, born the King of angels:\nO come, let us adore him, Christ the Lord!\n\nGod of God, Light of Light,\nLo, he abhors not the Virgin's womb;\nVery God, begotten, not created:\nO come, let us adore him, Christ the Lord!\n\nSing, choirs of angels, sing in exultation,\nSing, all ye citizens of heaven above!\nGlory to God, glory in the highest:\nO come, let us adore him, Christ the Lord!\n\nYea, Lord, we greet thee, born this happy morning;\nJesus, to thee be glory given!\nWord of the Father, now in flesh appearing:\nO come, let us adore him, Christ the Lord!"
     },
     77: {
         "titleEnglish": "When I survey the wondrous cross",
@@ -43,13 +46,33 @@ english_data = {
         "titleEnglish": "Rock of Ages",
         "lyricsEnglish": "Rock of Ages, cleft for me,\nLet me hide myself in Thee;\nLet the water and the blood,\nFrom Thy wounded side which flowed,\nBe of sin the double cure;\nSave from wrath and make me pure.\n\nNot the labors of my hands\nCan fulfill Thy law's demands;\nCould my zeal no respite know,\nCould my tears forever flow,\nAll for sin could not atone;\nThou must save, and Thou alone.\n\nNothing in my hand I bring,\nSimply to the cross I cling;\nNaked, come to Thee for dress;\nHelpless, look to Thee for grace;\nFoul, I to the fountain fly;\nWash me, Savior, or I die.\n\nWhile I draw this fleeting breath,\nWhen mine eyes shall close in death,\nWhen I soar to worlds unknown,\nSee Thee on Thy judgment throne,\nRock of Ages, cleft for me,\nLet me hide myself in Thee."
     },
+    197: {
+        "titleEnglish": "Holy, holy, holy! Lord God Almighty",
+        "lyricsEnglish": "Holy, holy, holy! Lord God Almighty!\nEarly in the morning our song shall rise to Thee;\nHoly, holy, holy, merciful and mighty!\nGod in three Persons, blessed Trinity!\n\nHoly, holy, holy! All the saints adore Thee,\nCasting down their golden crowns around the glassy sea;\nCherubim and seraphim falling down before Thee,\nWhich wert, and art, and evermore shalt be.\n\nHoly, holy, holy! Though the darkness hide Thee,\nThough the eye of sinful man Thy glory may not see;\nOnly Thou art holy; there is none beside Thee,\nPerfect in power, in love, and purity.\n\nHoly, holy, holy! Lord God Almighty!\nAll Thy works shall praise Thy Name, in earth, and sky, and sea;\nHoly, holy, holy; merciful and mighty!\nGod in three Persons, blessed Trinity!"
+    },
+    250: {
+        "titleEnglish": "Are you washed in the blood",
+        "lyricsEnglish": "Have you been to Jesus for the cleansing power?\nAre you washed in the blood of the Lamb?\nAre you fully trusting in His grace this hour?\nAre you washed in the blood of the Lamb?\n\nAre you washed in the blood,\nIn the soul-cleansing blood of the Lamb?\nAre your garments spotless? Are they white as snow?\nAre you washed in the blood of the Lamb?\n\nAre you walking daily by the Savior's side?\nAre you washed in the blood of the Lamb?\nDo you rest each moment in the Crucified?\nAre you washed in the blood of the Lamb?\n\nWhen the Bridegroom cometh will your robes be white?\nAre you washed in the blood of the Lamb?\nWill your soul be ready for the mansions bright,\nAnd be washed in the blood of the Lamb?\n\nLay aside the garments that are stained with sin,\nAnd be washed in the blood of the Lamb;\nThere's a fountain flowing for the soul unclean,\nO be washed in the blood of the Lamb!"
+    },
+    267: {
+        "titleEnglish": "Nearer, my God, to Thee",
+        "lyricsEnglish": "Nearer, my God, to Thee, nearer to Thee!\nE'en though it be a cross that raiseth me,\nStill all my song shall be, nearer, my God, to Thee;\nNearer, my God, to Thee, nearer to Thee!\n\nThough like the wanderer, the sun gone down,\nDarkness be over me, my rest a stone;\nYet in my dreams I'd be nearer, my God, to Thee;\nNearer, my God, to Thee, nearer to Thee!\n\nThere let the way appear, steps unto heaven;\nAll that Thou sendest me, in mercy given;\nAngels to beckon me nearer, my God, to Thee;\nNearer, my God, to Thee, nearer to Thee!\n\nThen, with my waking thoughts bright with Thy praise,\nOut of my stony griefs Bethel I'll raise;\nSo by my woes to be nearer, my God, to Thee;\nNearer, my God, to Thee, nearer to Thee!\n\nOr if on joyful wing cleaving the sky,\nSun, moon, and stars forgot, upward I'll fly,\nStill all my song shall be, nearer, my God, to Thee;\nNearer, my God, to Thee, nearer to Thee!"
+    },
     317: {
         "titleEnglish": "Through the night of doubt and sorrow",
         "lyricsEnglish": "Through the night of doubt and sorrow\nOnward goes the pilgrim band,\nSinging songs of expectation,\nMarching to the promised land.\nClear before us through the darkness\nGleams and burns the guiding light;\nBrother clasps the hand of brother,\nStepping fearless through the night.\n\nOne the light of God's own presence\nO'er His ransomed people shed,\nChasing far the gloom and terror,\nBrightening all the path we tread:\nOne the object of our journey,\nOne the faith which never tires,\nOne the earnest looking forward,\nOne the hope our God inspires.\n\nOne the strain that lips of thousands\nLift as from the heart of one;\nOne the conflict, one the peril,\nOne the march in God begun:\nOne the gladness of rejoicing\nOn the far eternal shore,\nWhere the one almighty Father\nReigns in love for evermore.\n\nOnward, therefore, pilgrim brothers,\nOnward, with the cross our aid!\nBear its shame, and fight its battle,\nTill we rest beneath its shade.\nSoon shall come the great awaking,\nSoon the rending of the tomb;\nThen the scattering of all shadows,\nAnd the end of toil and gloom."
+    },
+    332: {
+        "titleEnglish": "What a friend we have in Jesus",
+        "lyricsEnglish": "What a friend we have in Jesus,\nAll our sins and griefs to bear!\nWhat a privilege to carry\nEverything to God in prayer!\nO what peace we often forfeit,\nO what needless pain we bear,\nAll because we do not carry\nEverything to God in prayer!\n\nHave we trials and temptations?\nIs there trouble anywhere?\nWe should never be discouraged;\nTake it to the Lord in prayer.\nCan we find a friend so faithful\nWho will all our sorrows share?\nJesus knows our every weakness;\nTake it to the Lord in prayer.\n\nAre we weak and heavy laden,\nCumbered with a load of care?\nPrecious Savior, still our refuge;\nTake it to the Lord in prayer.\nDo thy friends despise, forsake thee?\nTake it to the Lord in prayer!\nIn His arms He'll take and shield thee;\nThou wilt find a solace there."
+    },
+    342: {
+        "titleEnglish": "Blessed assurance",
+        "lyricsEnglish": "Blessed assurance, Jesus is mine!\nO what a foretaste of glory divine!\nHeir of salvation, purchase of God,\nBorn of His Spirit, washed in His blood.\n\nThis is my story, this is my song,\nPraising my Savior all the day long;\nThis is my story, this is my song,\nPraising my Savior all the day long.\n\nPerfect submission, perfect delight,\nVisions of rapture now burst on my sight;\nAngels descending bring from above\nEchoes of mercy, whispers of love.\n\nPerfect submission, all is at rest,\nI in my Savior am happy and blest,\nWatching and waiting, looking above,\nFilled with His goodness, lost in His love."
     }
 }
 
-# 3. Inject the English fields
+# 3. Inject
 updated_count = 0
 for hymn in hymns:
     n = hymn.get('n')
@@ -58,7 +81,7 @@ for hymn in hymns:
         hymn['lyricsEnglish'] = english_data[n]['lyricsEnglish']
         updated_count += 1
 
-# 4. Save the updated file
+# 4. Save
 with open('assets/hymns-full.json', 'w', encoding='utf-8') as f:
     json.dump(hymns, f, indent=2, ensure_ascii=False)
 
