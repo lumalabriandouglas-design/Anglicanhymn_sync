@@ -1,18 +1,28 @@
 import json
 
-# 1. Load your existing JSON
 with open('assets/hymns-full.json', 'r', encoding='utf-8') as f:
     hymns = json.load(f)
 
-# 2. All English data
 english_data = {
     1: {
         "titleEnglish": "Awake, my soul, and with the sun",
         "lyricsEnglish": "Awake, my soul, and with the sun\nThy daily stage of duty run;\nShake off dull sloth, and joyful rise\nTo pay thy morning sacrifice.\n\nWake, and lift up thyself, my heart,\nAnd with the angels bear thy part,\nWho all night long unwearied sing\nHigh praise to the eternal King.\n\nAll praise to Thee, who safe hast kept\nAnd hast refreshed me while I slept;\nGrant, Lord, when I from death shall wake,\nI may of endless light partake.\n\nLord, I my vows to Thee renew;\nDisperse my sins as morning dew;\nGuard my first springs of thought and will,\nAnd with Thyself my spirit fill."
     },
+    2: {
+        "titleEnglish": "Jesus, Lord of heaven",
+        "lyricsEnglish": "Jesus, Lord of heaven and earth,\nGlory of the Father,\nSun of peace and righteousness,\nDrive away the darkness.\n\nCome, O Daystar from on high,\nShine upon us with Your grace;\nHoly Spirit, dwell within,\nFill our hearts with peace.\n\nStrengthen faith within us, Lord,\nRule our bodies and our minds;\nGive us joy and lasting peace,\nDrive all falsehood far away."
+    },
+    5: {
+        "titleEnglish": "Come to me when I awake",
+        "lyricsEnglish": "Come to me when I awake,\nAs the morning light appears;\nWrite upon my heart, O Lord,\nThoughts that are acceptable.\n\nCome to me in daily work,\nWhen the world would claim my mind;\nLet no earthly care obscure\nThe bright shining of Your face.\n\nCome to me when evening falls,\nAnd when I have turned away;\nCall me back and keep me safe\nFrom the snares of the enemy.\n\nCome to me in darkest night,\nWhen I sleep and when I dream;\nKeep me free from every fear,\nGuarded by the Saviour's power.\n\nStay with me throughout my life,\nStay with me when death draws near;\nLead me safely to Your home,\nThat I may rejoice with You."
+    },
     8: {
         "titleEnglish": "Christ, whose glory fills the skies",
         "lyricsEnglish": "Christ, whose glory fills the skies,\nChrist, the true, the only Light,\nSun of Righteousness, arise,\nTriumph o'er the shades of night;\nDayspring from on high, be near;\nDaystar, in my heart appear.\n\nDark and cheerless is the morn\nUnaccompanied by Thee;\nJoyless is the day's return\nTill Thy mercy's beams I see;\nTill they inward light impart,\nGlad my eyes, and warm my heart.\n\nVisit then this soul of mine,\nPierce the gloom of sin and grief;\nFill me, Radiancy divine,\nScatter all my unbelief;\nMore and more Thyself display,\nShining to the perfect day."
+    },
+    11: {
+        "titleEnglish": "My King",
+        "lyricsEnglish": "My King, I rejoice\nTo give thanks for Your glory;\nIn the morning I praise Your name,\nAnd declare it through the night.\n\nYour day is holy,\nA day of glory and of joy:\nLet all the nations sing\nWith gladness and with fear.\n\nAll workers of iniquity\nShall be scattered far away;\nThey shall wither like the grass,\nBut the righteous shall endure.\n\nThe saints of the Lord\nStand firm like the cedar;\nNo storm shall break them down,\nFor they are given to remain."
     },
     18: {
         "titleEnglish": "Abide with me",
@@ -42,10 +52,6 @@ english_data = {
         "titleEnglish": "Rock of Ages",
         "lyricsEnglish": "Rock of Ages, cleft for me,\nLet me hide myself in Thee;\nLet the water and the blood,\nFrom Thy wounded side which flowed,\nBe of sin the double cure;\nSave from wrath and make me pure.\n\nNot the labors of my hands\nCan fulfill Thy law's demands;\nCould my zeal no respite know,\nCould my tears forever flow,\nAll for sin could not atone;\nThou must save, and Thou alone.\n\nNothing in my hand I bring,\nSimply to the cross I cling;\nNaked, come to Thee for dress;\nHelpless, look to Thee for grace;\nFoul, I to the fountain fly;\nWash me, Savior, or I die.\n\nWhile I draw this fleeting breath,\nWhen mine eyes shall close in death,\nWhen I soar to worlds unknown,\nSee Thee on Thy judgment throne,\nRock of Ages, cleft for me,\nLet me hide myself in Thee."
     },
-    193: {
-        "titleEnglish": "Rock of Ages",
-        "lyricsEnglish": "Rock of Ages, cleft for me,\nLet me hide myself in Thee;\nLet the water and the blood,\nFrom Thy wounded side which flowed,\nBe of sin the double cure;\nSave from wrath and make me pure.\n\nNot the labors of my hands\nCan fulfill Thy law's demands;\nCould my zeal no respite know,\nCould my tears forever flow,\nAll for sin could not atone;\nThou must save, and Thou alone.\n\nNothing in my hand I bring,\nSimply to the cross I cling;\nNaked, come to Thee for dress;\nHelpless, look to Thee for grace;\nFoul, I to the fountain fly;\nWash me, Savior, or I die.\n\nWhile I draw this fleeting breath,\nWhen mine eyes shall close in death,\nWhen I soar to worlds unknown,\nSee Thee on Thy judgment throne,\nRock of Ages, cleft for me,\nLet me hide myself in Thee."
-    },
     197: {
         "titleEnglish": "Holy, holy, holy! Lord God Almighty",
         "lyricsEnglish": "Holy, holy, holy! Lord God Almighty!\nEarly in the morning our song shall rise to Thee;\nHoly, holy, holy, merciful and mighty!\nGod in three Persons, blessed Trinity!\n\nHoly, holy, holy! All the saints adore Thee,\nCasting down their golden crowns around the glassy sea;\nCherubim and seraphim falling down before Thee,\nWhich wert, and art, and evermore shalt be.\n\nHoly, holy, holy! Though the darkness hide Thee,\nThough the eye of sinful man Thy glory may not see;\nOnly Thou art holy; there is none beside Thee,\nPerfect in power, in love, and purity.\n\nHoly, holy, holy! Lord God Almighty!\nAll Thy works shall praise Thy Name, in earth, and sky, and sea;\nHoly, holy, holy; merciful and mighty!\nGod in three Persons, blessed Trinity!"
@@ -72,17 +78,15 @@ english_data = {
     }
 }
 
-# 3. Inject
-updated_count = 0
+updated = 0
 for hymn in hymns:
     n = hymn.get('n')
     if n in english_data:
         hymn['titleEnglish'] = english_data[n]['titleEnglish']
         hymn['lyricsEnglish'] = english_data[n]['lyricsEnglish']
-        updated_count += 1
+        updated += 1
 
-# 4. Save
 with open('assets/hymns-full.json', 'w', encoding='utf-8') as f:
     json.dump(hymns, f, indent=2, ensure_ascii=False)
 
-print(f"Successfully updated {updated_count} hymns with English lyrics!")
+print(f"Successfully updated {updated} hymns with English lyrics!")
