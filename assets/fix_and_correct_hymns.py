@@ -1,4 +1,11 @@
 #!/usr/bin/env python3
+"""
+Final permanent cleaner + corrector for Anglican Hymn Sync
+- Removes all WordPress / Enjatula junk
+- Fixes lonely "1" under titles
+- Corrects known broken hymns (4 and 7)
+"""
+
 import json
 import re
 from pathlib import Path
@@ -8,8 +15,11 @@ POSSIBLE_PATHS = [
     SCRIPT_DIR / "hymns-full.json",
     SCRIPT_DIR.parent / "hymns-full.json",
     Path("hymns-full.json"),
+    Path("assets/hymns-full.json"),
 ]
+
 OUTPUT_FILE = SCRIPT_DIR / "hymns-full-corrected.json"
+
 
 def clean_lyrics(raw: str) -> str:
     if not raw or not isinstance(raw, str):
@@ -17,29 +27,45 @@ def clean_lyrics(raw: str) -> str:
 
     text = raw
 
-    # Remove all the common junk
-    text = re.sub(r'^AZNIMI-Luganda\s*', '', text, flags=re.I)
+    # === Remove all known junk ===
+    text = re.sub(r'^AZNIMI-Luganda\s*', '', text, flags=re.IGNORECASE)
     text = re.sub(r'^—\s*', '', text)
-    text = re.sub(r'^by\s*', '', text, flags=re.I)
-    text = re.sub(r'Enjatula Luganda Anglican Hymns\s*', '', text, flags=re.I)
-    text = re.sub(r'^OLUYIMBA\s+\d+:\s*.+?\n', '', text, flags=re.I | re.M)
-    text = re.sub(r'Your email address will not be published\..*?Designed with WordPress', '', text, flags=re.I | re.S)
-    text = re.sub(r'Comment \*.*?Website', '', text, flags=re.I | re.S)
-    text = re.sub(r'Save my name, email, and website.*?comment\.', '', text, flags=re.I | re.S)
-    text = re.sub(r'AZNIMI-Luganda\s*', '', text, flags=re.I)
-    text = re.sub(r'Luganda Content Everyday\s*', '', text, flags=re.I)
-    text = re.sub(r'Designed with WordPress\s*', '', text, flags=re.I)
+    text = re.sub(r'^by\s*', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'Enjatula Luganda Anglican Hymns\s*', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'^OLUYIMBA\s+\d+:\s*.+?\n', '', text, flags=re.IGNORECASE | re.MULTILINE)
+
+    # WordPress footer and comment form
+    text = re.sub(
+        r'Your email address will not be published\..*?Designed with WordPress',
+        '',
+        text,
+        flags=re.IGNORECASE | re.DOTALL
+    )
+    text = re.sub(r'Comment \*.*?Website', '', text, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(r'Save my name, email, and website.*?comment\.', '', text, flags=re.IGNORECASE | re.DOTALL)
+    text = re.sub(r'AZNIMI-Luganda\s*', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'Luganda Content Everyday\s*', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'Designed with WordPress\s*', '', text, flags=re.IGNORECASE)
+
+    # Remove any remaining HTML tags
     text = re.sub(r'<[^>]+>', '', text)
 
     # Remove leading hyphens on lines
     text = re.sub(r'(?m)^-\s*', '', text)
+
+    # Fix hyphenated words (Katonda-amanyi → Katonda amanyi)
     text = re.sub(r'(\w)-(\w)', r'\1 \2', text)
 
-    # Fix lonely stanza numbers → "1. First line..."
+    # === Fix lonely stanza numbers ===
+    # Converts:
+    # 1
+    # TUZUUKUKE...
+    # into:
+    # 1. TUZUUKUKE...
     text = re.sub(r'^(\d+)\s*\n+', r'\1. ', text)
     text = re.sub(r'\n+(\d+)\s*\n+', r'\n\n\1. ', text)
 
-    # Clean whitespace
+    # Clean up whitespace
     text = re.sub(r' {2,}', ' ', text)
     text = re.sub(r'\n{3,}', '\n\n', text)
     text = re.sub(r'[ \t]+\n', '\n', text)
@@ -47,22 +73,40 @@ def clean_lyrics(raw: str) -> str:
 
     return text.strip()
 
+
 def main():
-    input_file = next((p for p in POSSIBLE_PATHS if p.exists()), None)
-    if not input_file:
+    # Find the input file
+    input_file = None
+    for path in POSSIBLE_PATHS:
+        if path.exists():
+            input_file = path
+            break
+
+    if input_file is None:
         print("ERROR: Could not find hymns-full.json")
+        print("Looked in these places:")
+        for p in POSSIBLE_PATHS:
+            print(f"  - {p}")
         return
 
     print(f"Found: {input_file}")
+
     with open(input_file, 'r', encoding='utf-8') as f:
         hymns = json.load(f)
 
     print(f"Loaded {len(hymns)} hymns...")
 
+    cleaned_count = 0
     for h in hymns:
-        h['lyrics'] = clean_lyrics(h.get('lyrics', ''))
+        original = h.get('lyrics', '')
+        cleaned = clean_lyrics(original)
+        if cleaned != original:
+            cleaned_count += 1
+        h['lyrics'] = cleaned
 
-    # Manual fixes
+    # === Manual corrections for known broken hymns ===
+
+    # Hymn 4 – was truncated
     for h in hymns:
         if h.get('n') == 4:
             h['lyrics'] = """1. MUKAMA waffe bulijjo,
@@ -90,7 +134,10 @@ Yesu, kikyo so si kyaffe,
 Tubeere naawe bulijjo,
 Tutambule mu kkubo lyo."""
             print("→ Fixed Hymn 4")
+            break
 
+    # Hymn 7
+    for h in hymns:
         if h.get('n') == 7:
             h['lyrics'] = """1. ZUUKUKA ggwe omwoyo gwange,
 Busaasaanye,
@@ -113,16 +160,23 @@ Olw’olubeerwa okuva gy’ali,
 N’ojja eri ye;
 Okusinza n’amaanyi go."""
             print("→ Fixed Hymn 7")
+            break
 
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(hymns, f, indent=2, ensure_ascii=False)
 
-    print(f"\nDone! Output → {OUTPUT_FILE}")
-    print("1. Delete old hymns-full.json")
+    print(f"\nDone!")
+    print(f"Hymns cleaned     : {cleaned_count}")
+    print(f"Output written to : {OUTPUT_FILE}")
+    print("\n=== Next steps ===")
+    print("1. Delete the old hymns-full.json")
     print("2. Rename hymns-full-corrected.json → hymns-full.json")
-    print("3. Put it in assets/")
-    print("4. flutter clean && flutter pub get && flutter run")
-    print("5. git add . && git commit -m \"Cleaned lyrics 1-150 + fixed 4 & 7\" && git push")
+    print("3. Put it in the assets/ folder")
+    print("4. Run these commands:")
+    print("   flutter clean")
+    print("   flutter pub get")
+    print("   flutter run")
+
 
 if __name__ == "__main__":
     main()
