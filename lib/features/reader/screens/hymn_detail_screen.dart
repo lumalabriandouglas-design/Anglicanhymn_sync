@@ -29,13 +29,11 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Keep screen awake while reading lyrics in church
     WakelockPlus.enable();
   }
 
   @override
   void dispose() {
-    // Disable wakelock when leaving screen
     WakelockPlus.disable();
     _autoScrollTimer?.cancel();
     _scrollController.dispose();
@@ -71,19 +69,32 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   }
 
   void _showProGatedDialog() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.cardNavy,
-        title: const Text('PRO Feature', style: TextStyle(color: AppColors.celestialGold)),
-        content: const Text(
+        backgroundColor: isDark ? AppColors.cardNavy : Colors.white,
+        title: Text(
+          'PRO Feature',
+          style: TextStyle(
+            color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+          ),
+        ),
+        content: Text(
           'Hands-free Auto-Scroll is exclusive to PRO users. Enable PRO mode in the Settings menu to unlock.',
-          style: TextStyle(color: AppColors.textWhite),
+          style: TextStyle(
+            color: isDark ? AppColors.textWhite : AppColors.lightTextPrimary,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('OK', style: TextStyle(color: AppColors.celestialGold)),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+              ),
+            ),
           ),
         ],
       ),
@@ -95,23 +106,59 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final settings = context.watch<SettingsProvider>();
     final hymnProvider = context.watch<HymnProvider>();
     final audioProvider = context.watch<AudioProvider>();
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // Clean title for display
+    final cleanTitle = widget.hymn.title
+        .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')
+        .replaceAll(' Song Lyrics', '')
+        .trim();
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.primaryNavy : AppColors.lightBackground,
       appBar: AppBar(
-        title: Text(
-          '${widget.hymn.number}. ${widget.hymn.title}',
-          style: GoogleFonts.cinzel(fontSize: 18, fontWeight: FontWeight.bold),
+        backgroundColor: isDark ? AppColors.primaryNavy : Colors.white,
+        elevation: 0,
+        centerTitle: false,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Hymn ${widget.hymn.number}',
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              cleanTitle,
+              style: GoogleFonts.lora(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: isDark ? AppColors.textWhite : AppColors.lightTextPrimary,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
         ),
         actions: [
           IconButton(
             icon: Icon(
               widget.hymn.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-              color: widget.hymn.isFavorite ? Colors.redAccent : AppColors.textWhite,
+              color: widget.hymn.isFavorite
+                  ? Colors.redAccent
+                  : (isDark ? AppColors.textWhite : AppColors.primaryNavy),
             ),
             onPressed: () => hymnProvider.toggleFavorite(widget.hymn),
           ),
           IconButton(
-            icon: const Icon(Icons.report_problem_outlined),
+            icon: Icon(
+              Icons.report_problem_outlined,
+              color: isDark ? AppColors.textWhite : AppColors.primaryNavy,
+            ),
             onPressed: () {
               showDialog(
                 context: context,
@@ -126,6 +173,12 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
       ),
       body: Column(
         children: [
+          // Subtle divider under AppBar
+          Container(
+            height: 1,
+            color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.withOpacity(0.15),
+          ),
+
           Expanded(
             child: DualLyricsView(
               lyricsLuganda: widget.hymn.lyricsLuganda,
@@ -135,29 +188,69 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               scrollController: _scrollController,
             ),
           ),
+
+          // Bottom control bar
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: AppColors.cardNavy,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(
-                    _isAutoScrolling ? Icons.pause_circle_filled : Icons.unfold_more_rounded,
-                    color: AppColors.celestialGold,
-                  ),
-                  onPressed: () => _toggleAutoScroll(settings.isProUser),
-                ),
-                ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.celestialGold,
-                    foregroundColor: AppColors.primaryNavy,
-                  ),
-                  icon: const Icon(Icons.play_arrow_rounded),
-                  label: const Text('Play Audio'),
-                  onPressed: () => audioProvider.playHymn(widget.hymn),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.cardNavy : Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
                 ),
               ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: Row(
+                children: [
+                  // Auto-scroll button
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.celestialGold.withOpacity(0.15)
+                          : AppColors.celestialGold.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: IconButton(
+                      icon: Icon(
+                        _isAutoScrolling
+                            ? Icons.pause_rounded
+                            : Icons.unfold_more_rounded,
+                        color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+                      ),
+                      onPressed: () => _toggleAutoScroll(settings.isProUser),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Play Audio button
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.celestialGold,
+                        foregroundColor: AppColors.primaryNavy,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      icon: const Icon(Icons.play_arrow_rounded, size: 22),
+                      label: const Text(
+                        'Play Audio',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 15,
+                        ),
+                      ),
+                      onPressed: () => audioProvider.playHymn(widget.hymn),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
