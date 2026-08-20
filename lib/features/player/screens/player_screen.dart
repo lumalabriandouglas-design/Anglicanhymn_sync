@@ -6,11 +6,6 @@ class PlayerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Audio Player'),
-      ),
-      body: const PlayerDeck(),
-    );
+    return const PlayerDeck();
   }
 }
