@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -8,41 +9,131 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayerService _audioService;
 
   Hymn? _currentHymn;
+  List<Hymn> _allHymns = [];          // full list for next/previous
   bool _isPlaying = false;
   double _currentSpeed = 1.0;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
+  bool _isLoading = false;
+  String? _error;
+
+  StreamSubscription? _playerStateSub;
+  StreamSubscription? _positionSub;
+  StreamSubscription? _durationSub;
 
   AudioProvider(this._audioService) {
-    _audioService.playerStateStream.listen((state) {
-      _isPlaying = state.playing;
-      if (state.processingState == ProcessingState.completed) {
-        _isPlaying = false;
-      }
-      notifyListeners();
-    });
+    _initListeners();
   }
 
+  // ====================== GETTERS ======================
   AudioPlayerService get audioService => _audioService;
   Hymn? get currentHymn => _currentHymn;
   bool get isPlaying => _isPlaying;
   double get currentSpeed => _currentSpeed;
+  Duration get position => _position;
+  Duration get duration => _duration;
+  bool get isLoading => _isLoading;
+  String? get error => _error;
 
+  double get progress {
+    if (_duration.inMilliseconds <= 0) return 0.0;
+    return (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0);
+  }
+
+  // Call this once from HymnProvider after hymns are loaded
+  void setHymns(List<Hymn> hymns) {
+    _allHymns = hymns;
+  }
+
+  // ====================== LISTENERS ======================
+  void _initListeners() {
+    _playerStateSub = _audioService.playerStateStream.listen((state) {
+      _isPlaying = state.playing;
+
+      if (state.processingState == ProcessingState.completed) {
+        _isPlaying = false;
+        _position = Duration.zero;
+        // Optional: auto play next
+        // playNext();
+      }
+
+      _isLoading = state.processingState == ProcessingState.loading ||
+          state.processingState == ProcessingState.buffering;
+
+      notifyListeners();
+    });
+
+    _positionSub = _audioService.positionStream.listen((pos) {
+      _position = pos;
+      notifyListeners();
+    });
+
+    _durationSub = _audioService.durationStream.listen((dur) {
+      if (dur != null) {
+        _duration = dur;
+        notifyListeners();
+      }
+    });
+  }
+
+  // ====================== CORE PLAYBACK ======================
   Future<void> playHymn(Hymn hymn, {String? audioUrl}) async {
-    _currentHymn = hymn;
-    notifyListeners();
+    try {
+      _error = null;
+      _isLoading = true;
+      _currentHymn = hymn;
+      notifyListeners();
 
-    final url = audioUrl ??
-        'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
+      final url = audioUrl ?? _getAudioUrl(hymn);
 
-    await _audioService.loadAudio(url);
-    await _audioService.play();
+      await _audioService.loadAudio(url);
+      await _audioService.setSpeed(_currentSpeed);
+      await _audioService.play();
+    } catch (e) {
+      _error = 'Failed to play audio';
+      debugPrint('playHymn error: $e');
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  /// Special song you requested
+  Future<void> playWhatAFriend() async {
+    final special = Hymn(
+      number: 999, // temporary number
+      title: 'What A Friend We Have In Jesus',
+      lyricsLuganda: 'What A Friend We Have In Jesus',
+      lyricsEnglish: 'What a friend we have in Jesus...',
+    );
+
+    await playHymn(
+      special,
+      audioUrl: 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a',
+    );
+  }
+
+  String _getAudioUrl(Hymn hymn) {
+    final title = hymn.title.toLowerCase();
+
+    if (title.contains('friend') || title.contains('what a friend')) {
+      return 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a';
+    }
+
+    // Fallback
+    return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   }
 
   Future<void> togglePlayPause() async {
+    if (_currentHymn == null) return;
     if (_isPlaying) {
       await _audioService.pause();
     } else {
       await _audioService.play();
     }
+  }
+
+  Future<void> seek(Duration position) async {
+    await _audioService.seek(position);
   }
 
   Future<void> setPlaybackSpeed(double speed) async {
@@ -55,6 +146,50 @@ class AudioProvider extends ChangeNotifier {
     await _audioService.stop();
     _currentHymn = null;
     _isPlaying = false;
+    _position = Duration.zero;
+    _duration = Duration.zero;
+    _error = null;
     notifyListeners();
+  }
+
+  // ====================== NEXT / PREVIOUS ======================
+  Future<void> playNext() async {
+    if (_currentHymn == null || _allHymns.isEmpty) return;
+
+    final currentIndex = _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
+
+    if (currentIndex == -1 || currentIndex >= _allHymns.length - 1) {
+      // reached end → go to first
+      await playHymn(_allHymns.first);
+    } else {
+      await playHymn(_allHymns[currentIndex + 1]);
+    }
+  }
+
+  Future<void> playPrevious() async {
+    if (_currentHymn == null || _allHymns.isEmpty) return;
+
+    // YouTube Music behaviour
+    if (_position.inSeconds > 3) {
+      await seek(Duration.zero);
+      return;
+    }
+
+    final currentIndex = _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
+
+    if (currentIndex <= 0) {
+      await playHymn(_allHymns.last);
+    } else {
+      await playHymn(_allHymns[currentIndex - 1]);
+    }
+  }
+
+  // ====================== CLEAN UP ======================
+  @override
+  void dispose() {
+    _playerStateSub?.cancel();
+    _positionSub?.cancel();
+    _durationSub?.cancel();
+    super.dispose();
   }
 }
