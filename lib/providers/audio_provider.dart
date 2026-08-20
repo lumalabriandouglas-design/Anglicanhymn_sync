@@ -9,7 +9,7 @@ class AudioProvider extends ChangeNotifier {
   final AudioPlayerService _audioService;
 
   Hymn? _currentHymn;
-  List<Hymn> _allHymns = [];          // full list for next/previous
+  List<Hymn> _allHymns = [];
   bool _isPlaying = false;
   double _currentSpeed = 1.0;
   Duration _position = Duration.zero;
@@ -40,7 +40,6 @@ class AudioProvider extends ChangeNotifier {
     return (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0);
   }
 
-  // Call this once from HymnProvider after hymns are loaded
   void setHymns(List<Hymn> hymns) {
     _allHymns = hymns;
   }
@@ -53,8 +52,6 @@ class AudioProvider extends ChangeNotifier {
       if (state.processingState == ProcessingState.completed) {
         _isPlaying = false;
         _position = Duration.zero;
-        // Optional: auto play next
-        // playNext();
       }
 
       _isLoading = state.processingState == ProcessingState.loading ||
@@ -97,29 +94,34 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  /// Special song you requested
+  /// Special song: What A Friend We Have In Jesus / Nina omukwano gwange
   Future<void> playWhatAFriend() async {
     final special = Hymn(
-      number: 999, // temporary number
-      title: 'What A Friend We Have In Jesus',
-      lyricsLuganda: 'What A Friend We Have In Jesus',
+      number: '999',
+      title: 'Nina omukwano gwange',
+      lyricsLuganda: 'Nina omukwano gwange',
       lyricsEnglish: 'What a friend we have in Jesus...',
     );
 
     await playHymn(
       special,
-      audioUrl: 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a',
+      audioUrl:
+          'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a',
     );
   }
 
   String _getAudioUrl(Hymn hymn) {
     final title = hymn.title.toLowerCase();
 
-    if (title.contains('friend') || title.contains('what a friend')) {
+    // Match both English and Luganda titles
+    if (title.contains('friend') ||
+        title.contains('what a friend') ||
+        title.contains('nina omukwano') ||
+        title.contains('omukwano gwange')) {
       return 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a';
     }
 
-    // Fallback
+    // Fallback test track
     return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   }
 
@@ -156,10 +158,10 @@ class AudioProvider extends ChangeNotifier {
   Future<void> playNext() async {
     if (_currentHymn == null || _allHymns.isEmpty) return;
 
-    final currentIndex = _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
+    final currentIndex =
+        _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
 
     if (currentIndex == -1 || currentIndex >= _allHymns.length - 1) {
-      // reached end → go to first
       await playHymn(_allHymns.first);
     } else {
       await playHymn(_allHymns[currentIndex + 1]);
@@ -169,13 +171,14 @@ class AudioProvider extends ChangeNotifier {
   Future<void> playPrevious() async {
     if (_currentHymn == null || _allHymns.isEmpty) return;
 
-    // YouTube Music behaviour
+    // YouTube Music behaviour: restart if > 3 seconds
     if (_position.inSeconds > 3) {
       await seek(Duration.zero);
       return;
     }
 
-    final currentIndex = _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
+    final currentIndex =
+        _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
 
     if (currentIndex <= 0) {
       await playHymn(_allHymns.last);
