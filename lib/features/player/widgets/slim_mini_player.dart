@@ -24,7 +24,6 @@ class SlimMiniPlayer extends StatelessWidget {
         );
       },
       onHorizontalDragEnd: (details) {
-        // Swipe right → previous | Swipe left → next
         if (details.primaryVelocity == null) return;
         if (details.primaryVelocity! > 300) {
           audio.playPrevious();

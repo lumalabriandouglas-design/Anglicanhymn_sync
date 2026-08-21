@@ -173,7 +173,7 @@ class PlayerDeck extends StatelessWidget {
                 IconButton(
                   iconSize: 34,
                   icon: const Icon(Icons.skip_previous_rounded, color: Colors.white70),
-                  onPressed: () {},
+                  onPressed: () => audio.playPrevious(),
                 ),
                 const SizedBox(width: 16),
                 Container(
@@ -203,7 +203,7 @@ class PlayerDeck extends StatelessWidget {
                 IconButton(
                   iconSize: 34,
                   icon: const Icon(Icons.skip_next_rounded, color: Colors.white70),
-                  onPressed: () {},
+                  onPressed: () => audio.playNext(),
                 ),
               ],
             ),
