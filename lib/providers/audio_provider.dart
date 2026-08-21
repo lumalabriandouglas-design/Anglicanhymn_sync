@@ -94,30 +94,14 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  /// Special song: What A Friend We Have In Jesus / Nina omukwano gwange
-  Future<void> playWhatAFriend() async {
-    final special = Hymn(
-      number: '999',
-      title: 'Nina omukwano gwange',
-      lyricsLuganda: 'Nina omukwano gwange',
-      lyricsEnglish: 'What a friend we have in Jesus...',
-    );
-
-    await playHymn(
-      special,
-      audioUrl:
-          'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a',
-    );
-  }
-
   String _getAudioUrl(Hymn hymn) {
     final title = hymn.title.toLowerCase();
 
-    // Match both English and Luganda titles
-    if (title.contains('friend') ||
-        title.contains('what a friend') ||
-        title.contains('nina omukwano') ||
-        title.contains('omukwano gwange')) {
+    // Nina omukwano gwange / What A Friend We Have In Jesus
+    if (title.contains('nina omukwano') ||
+        title.contains('omukwano gwange') ||
+        title.contains('friend') ||
+        title.contains('what a friend')) {
       return 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a';
     }
 
@@ -171,7 +155,6 @@ class AudioProvider extends ChangeNotifier {
   Future<void> playPrevious() async {
     if (_currentHymn == null || _allHymns.isEmpty) return;
 
-    // YouTube Music behaviour: restart if > 3 seconds
     if (_position.inSeconds > 3) {
       await seek(Duration.zero);
       return;
@@ -187,7 +170,6 @@ class AudioProvider extends ChangeNotifier {
     }
   }
 
-  // ====================== CLEAN UP ======================
   @override
   void dispose() {
     _playerStateSub?.cancel();
