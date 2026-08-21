@@ -8,9 +8,8 @@ import json
 import re
 from pathlib import Path
 
-INPUT_FILE = Path("hymns-full.json")          # your current file
-OUTPUT_FILE = Path("hymns-full-corrected.json")
-
+INPUT_FILE = Path("assets/hymns-full.json")
+OUTPUT_FILE = Path("assets/hymns-full-corrected.json")
 def clean_lyrics(raw: str) -> str:
     if not raw or not isinstance(raw, str):
         return ""
@@ -76,6 +75,8 @@ def main():
 
     # === Manual corrections for known broken hymns ===
 
+       # === Manual corrections for known broken hymns ===
+
     # Hymn 4 was truncated
     for h in hymns:
         if h.get('n') == 4:
@@ -111,6 +112,73 @@ Tutambule mu kkubo lyo."""
             print("→ Fixed Hymn 4 (was truncated)")
             break
 
+    # Hymn 152 – English
+    for h in hymns:
+        if h.get('n') == 152:
+            h['titleEnglish'] = "Praise, my soul, the King of Heaven"
+            h['lyricsEnglish'] = """1. Praise, my soul, the King of Heaven;
+To His feet thy tribute bring.
+Ransomed, healed, restored, forgiven,
+Who like thee His praise should sing?
+Praise Him! Praise Him!
+Praise the everlasting King!
+
+2. Praise Him for His grace and favour
+To our fathers in distress;
+Praise Him, still the same forever,
+Slow to chide and swift to bless.
+Praise Him! Praise Him!
+Glorious in His faithfulness!
+
+3. Father-like, He tends and spares us;
+Well our feeble frame He knows;
+In His hands He gently bears us,
+Rescues us from all our foes.
+Praise Him! Praise Him!
+Widely as His mercy flows!
+
+4. Angels, help us to adore Him;
+Ye behold Him face to face;
+Sun and moon, bow down before Him,
+Dwellers all in time and space.
+Praise Him! Praise Him!
+Praise with us the God of grace!"""
+            print("→ Added English for Hymn 152")
+            break
+
+    # Hymn 308 – English
+    for h in hymns:
+        if h.get('n') == 308:
+            h['titleEnglish'] = "And Can It Be"
+            h['lyricsEnglish'] = """1. And can it be that I should gain
+An interest in the Saviour’s blood?
+Died He for me, who caused His pain?
+For me, who Him to death pursued?
+Amazing love! how can it be
+That Thou, my God, shouldst die for me?
+
+2. He left His Father’s throne above,
+So free, so infinite His grace;
+Emptied Himself of all but love,
+And bled for Adam’s helpless race:
+’Tis mercy all, immense and free;
+For, O my God, it found out me.
+
+3. Long my imprisoned spirit lay
+Fast bound in sin and nature’s night;
+Thine eye diffused a quickening ray,
+I woke, the dungeon flamed with light;
+My chains fell off, my heart was free;
+I rose, went forth, and followed Thee.
+
+4. No condemnation now I dread;
+Jesus, and all in Him, is mine!
+Alive in Him, my living Head,
+And clothed in righteousness divine,
+Bold I approach the eternal throne,
+And claim the crown, through Christ my own."""
+            print("→ Added English for Hymn 308")
+            break
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
         json.dump(hymns, f, indent=2, ensure_ascii=False)
 
