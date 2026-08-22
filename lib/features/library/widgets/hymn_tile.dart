@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/hymn_audio.dart';
 import '../../../models/hymn.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
 
@@ -123,15 +124,17 @@ class HymnTile extends StatelessWidget {
                   ),
                 ),
 
-                // Play button
-                IconButton(
-                  icon: Icon(
-                    Icons.play_circle_outline_rounded,
-                    color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
-                    size: 28,
-                  ),
-                  onPressed: onPlayTap,
-                ),
+                if (HymnAudio.hasAudio(hymn))
+                  IconButton(
+                    icon: Icon(
+                      Icons.play_circle_outline_rounded,
+                      color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+                      size: 28,
+                    ),
+                    onPressed: onPlayTap,
+                  )
+                else
+                  const SizedBox(width: 8),
               ],
             ),
           ),

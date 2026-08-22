@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/constants/hymn_audio.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
@@ -107,6 +108,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final hymnProvider = context.watch<HymnProvider>();
     final audioProvider = context.watch<AudioProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final hasAudio = HymnAudio.hasAudio(widget.hymn);
 
     // Clean title for display
     final cleanTitle = widget.hymn.title
@@ -230,23 +232,37 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.celestialGold,
-                        foregroundColor: AppColors.primaryNavy,
+                        backgroundColor: hasAudio
+                            ? AppColors.celestialGold
+                            : (isDark ? Colors.white12 : Colors.grey.shade300),
+                        foregroundColor: hasAudio
+                            ? AppColors.primaryNavy
+                            : (isDark ? Colors.white54 : Colors.grey.shade600),
                         elevation: 0,
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      icon: const Icon(Icons.play_arrow_rounded, size: 22),
-                      label: const Text(
-                        'Play Audio',
-                        style: TextStyle(
+                      icon: Icon(
+                        hasAudio
+                            ? Icons.play_arrow_rounded
+                            : Icons.hourglass_empty_rounded,
+                        size: 22,
+                      ),
+                      label: Text(
+                        hasAudio ? 'Play Audio' : 'Audio coming soon',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 15,
                         ),
                       ),
-                      onPressed: () => audioProvider.playHymn(widget.hymn),
+                      onPressed: hasAudio
+                          ? () {
+                              audioProvider.setHymns(hymnProvider.allHymns);
+                              audioProvider.playHymn(widget.hymn);
+                            }
+                          : null,
                     ),
                   ),
                 ],

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../core/constants/hymn_audio.dart';
 import '../core/services/audio_player_service.dart';
 import '../models/hymn.dart';
 
@@ -25,7 +26,6 @@ class AudioProvider extends ChangeNotifier {
     _initListeners();
   }
 
-  // ====================== GETTERS ======================
   AudioPlayerService get audioService => _audioService;
   Hymn? get currentHymn => _currentHymn;
   bool get isPlaying => _isPlaying;
@@ -34,6 +34,9 @@ class AudioProvider extends ChangeNotifier {
   Duration get duration => _duration;
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  List<Hymn> get playableHymns =>
+      _allHymns.where(HymnAudio.hasAudio).toList();
 
   double get progress {
     if (_duration.inMilliseconds <= 0) return 0.0;
@@ -44,7 +47,6 @@ class AudioProvider extends ChangeNotifier {
     _allHymns = hymns;
   }
 
-  // ====================== LISTENERS ======================
   void _initListeners() {
     _playerStateSub = _audioService.playerStateStream.listen((state) {
       _isPlaying = state.playing;
@@ -52,6 +54,7 @@ class AudioProvider extends ChangeNotifier {
       if (state.processingState == ProcessingState.completed) {
         _isPlaying = false;
         _position = Duration.zero;
+        playNext();
       }
 
       _isLoading = state.processingState == ProcessingState.loading ||
@@ -73,15 +76,20 @@ class AudioProvider extends ChangeNotifier {
     });
   }
 
-  // ====================== CORE PLAYBACK ======================
   Future<void> playHymn(Hymn hymn, {String? audioUrl}) async {
+    final url = audioUrl ?? HymnAudio.urlFor(hymn);
+    if (url == null) {
+      _error = 'No audio for this hymn yet';
+      _isLoading = false;
+      notifyListeners();
+      return;
+    }
+
     try {
       _error = null;
       _isLoading = true;
       _currentHymn = hymn;
       notifyListeners();
-
-      final url = audioUrl ?? _getAudioUrl(hymn);
 
       await _audioService.loadAudio(url);
       await _audioService.setSpeed(_currentSpeed);
@@ -92,21 +100,6 @@ class AudioProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-
-  String _getAudioUrl(Hymn hymn) {
-    final title = hymn.title.toLowerCase();
-
-    // Nina omukwano gwange / What A Friend We Have In Jesus
-    if (title.contains('nina omukwano') ||
-        title.contains('omukwano gwange') ||
-        title.contains('friend') ||
-        title.contains('what a friend')) {
-      return 'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a';
-    }
-
-    // Fallback test track
-    return 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   }
 
   Future<void> togglePlayPause() async {
@@ -138,22 +131,20 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ====================== NEXT / PREVIOUS ======================
   Future<void> playNext() async {
-    if (_currentHymn == null || _allHymns.isEmpty) return;
+    final list = playableHymns;
+    if (_currentHymn == null || list.isEmpty) return;
 
     final currentIndex =
-        _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
-
-    if (currentIndex == -1 || currentIndex >= _allHymns.length - 1) {
-      await playHymn(_allHymns.first);
-    } else {
-      await playHymn(_allHymns[currentIndex + 1]);
-    }
+        list.indexWhere((h) => h.number == _currentHymn!.number);
+    final nextIndex =
+        (currentIndex == -1) ? 0 : (currentIndex + 1) % list.length;
+    await playHymn(list[nextIndex]);
   }
 
   Future<void> playPrevious() async {
-    if (_currentHymn == null || _allHymns.isEmpty) return;
+    final list = playableHymns;
+    if (_currentHymn == null || list.isEmpty) return;
 
     if (_position.inSeconds > 3) {
       await seek(Duration.zero);
@@ -161,13 +152,9 @@ class AudioProvider extends ChangeNotifier {
     }
 
     final currentIndex =
-        _allHymns.indexWhere((h) => h.number == _currentHymn!.number);
-
-    if (currentIndex <= 0) {
-      await playHymn(_allHymns.last);
-    } else {
-      await playHymn(_allHymns[currentIndex - 1]);
-    }
+        list.indexWhere((h) => h.number == _currentHymn!.number);
+    final prevIndex = (currentIndex <= 0) ? list.length - 1 : currentIndex - 1;
+    await playHymn(list[prevIndex]);
   }
 
   @override

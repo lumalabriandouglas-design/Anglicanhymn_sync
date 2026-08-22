@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/constants/hymn_audio.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/search_engine.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../widgets/player_deck.dart';
+
 
 class PlayerScreen extends StatefulWidget {
   const PlayerScreen({super.key});
@@ -25,8 +27,9 @@ class _PlayerScreenState extends State<PlayerScreen> {
     super.dispose();
   }
 
-  List<Hymn> _filterHymns(List<Hymn> hymns) {
-    return SearchEngine.searchHymns(hymns, _query);
+    List<Hymn> _filterHymns(List<Hymn> hymns) {
+    final playable = hymns.where(HymnAudio.hasAudio).toList();
+    return SearchEngine.searchHymns(playable, _query);
   }
 
   void _openFullPlayer(BuildContext context) {
@@ -93,10 +96,12 @@ class _PlayerScreenState extends State<PlayerScreen> {
           ),
           Expanded(
             child: hymns.isEmpty
-                ? const Center(
+                ? Center(
                     child: Text(
-                      'No hymns found',
-                      style: TextStyle(color: AppColors.textGrey),
+                      _query.trim().isEmpty
+                          ? 'No audio uploaded yet'
+                          : 'No matching audio',
+                      style: const TextStyle(color: AppColors.textGrey),
                     ),
                   )
                 : ListView.builder(
