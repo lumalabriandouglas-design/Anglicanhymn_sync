@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/search_engine.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
@@ -25,13 +26,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   List<Hymn> _filterHymns(List<Hymn> hymns) {
-    if (_query.trim().isEmpty) return hymns;
-
-    final q = _query.toLowerCase();
-    return hymns.where((h) {
-      return h.number.toLowerCase().contains(q) ||
-          h.title.toLowerCase().contains(q);
-    }).toList();
+    return SearchEngine.searchHymns(hymns, _query);
   }
 
   void _openFullPlayer(BuildContext context) {
@@ -39,7 +34,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
       context,
       MaterialPageRoute(
         builder: (_) => const PlayerDeck(),
-        fullscreenDialog: true, // nice slide-up feel
+        fullscreenDialog: true,
       ),
     );
   }
@@ -50,8 +45,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
 
     audio.setHymns(hymnProvider.allHymns);
     audio.playHymn(hymn);
-
-    // Open full player after starting
     _openFullPlayer(context);
   }
 
@@ -68,7 +61,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
         title: const Text('Audio Library'),
         elevation: 0,
         actions: [
-          // Quick button to open full player if something is already playing
           if (audio.currentHymn != null)
             IconButton(
               icon: const Icon(Icons.queue_music_rounded, color: AppColors.celestialGold),
@@ -79,7 +71,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
       ),
       body: Column(
         children: [
-          // Search bar
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: TextField(
@@ -87,7 +78,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
               onChanged: (val) => setState(() => _query = val),
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Search hymns by number or title...',
+                hintText: 'Search number, Luganda or English title...',
                 hintStyle: TextStyle(color: Colors.white.withOpacity(0.4)),
                 prefixIcon: const Icon(Icons.search, color: AppColors.celestialGold),
                 filled: true,
@@ -100,8 +91,6 @@ class _PlayerScreenState extends State<PlayerScreen> {
               ),
             ),
           ),
-
-          // Results
           Expanded(
             child: hymns.isEmpty
                 ? const Center(
@@ -112,7 +101,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                   )
                 : ListView.builder(
                     itemCount: hymns.length,
-                    padding: const EdgeInsets.only(bottom: 90), // space for mini player
+                    padding: const EdgeInsets.only(bottom: 90),
                     itemBuilder: (context, index) {
                       final hymn = hymns[index];
                       final isCurrent = audio.currentHymn?.number == hymn.number;
@@ -123,7 +112,8 @@ class _PlayerScreenState extends State<PlayerScreen> {
                               ? AppColors.celestialGold
                               : AppColors.celestialGold.withOpacity(0.15),
                           child: isCurrent
-                              ? const Icon(Icons.equalizer_rounded, color: Color(0xFF0B132B), size: 20)
+                              ? const Icon(Icons.equalizer_rounded,
+                                  color: Color(0xFF0B132B), size: 20)
                               : Text(
                                   hymn.number,
                                   style: const TextStyle(
@@ -142,6 +132,17 @@ class _PlayerScreenState extends State<PlayerScreen> {
                             fontWeight: FontWeight.w500,
                           ),
                         ),
+                        subtitle: hymn.hasEnglishTitle
+                            ? Text(
+                                hymn.titleEnglish,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.45),
+                                  fontSize: 12,
+                                ),
+                              )
+                            : null,
                         trailing: IconButton(
                           icon: Icon(
                             isCurrent && audio.isPlaying

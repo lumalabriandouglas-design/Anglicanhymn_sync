@@ -90,7 +90,7 @@ class HymnTile extends StatelessWidget {
                 const SizedBox(width: 14),
 
                 // Title + preview
-                Expanded(
+                                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -110,7 +110,7 @@ class HymnTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        lyricPreview,
+                        hymn.hasEnglishTitle ? hymn.titleEnglish : lyricPreview,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
