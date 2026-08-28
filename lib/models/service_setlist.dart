@@ -1,5 +1,5 @@
 class SetlistItem {
-  final String role; // Entrance, Gradual, Offertory, Communion, Recessional
+  final String role;
   final String hymnNumber;
   final String hymnTitle;
 
@@ -36,6 +36,19 @@ class ServiceSetlist {
     required this.date,
     required this.items,
   });
+
+  ServiceSetlist copyWith({
+    String? title,
+    DateTime? date,
+    List<SetlistItem>? items,
+  }) {
+    return ServiceSetlist(
+      id: id,
+      title: title ?? this.title,
+      date: date ?? this.date,
+      items: items ?? this.items,
+    );
+  }
 
   factory ServiceSetlist.fromJson(Map<String, dynamic> json) {
     return ServiceSetlist(
