@@ -133,22 +133,16 @@ class HymnAudio {
     if (lang == LyricsLanguage.english) {
       return pick('english') ?? pick('luganda') ?? fallback;
     }
-    return pick('english') ?? pick('luganda') ?? fallback ?? byNumber[hymn.number];
+    return pick('english') ??
+        pick('luganda') ??
+        fallback ??
+        byNumber[hymn.number];
   }
 
   static bool hasAudio(Hymn hymn) {
     if (hymn.audioUrl != null && hymn.audioUrl!.trim().isNotEmpty) return true;
     if (tracksForHymn(hymn.number).isNotEmpty) return true;
-    if (byNumber.containsKey(hymn.number)) return true;
-
-    final blob = '${hymn.title} ${hymn.titleEnglish}'.toLowerCase();
-    if (blob.contains('nina omukwano') ||
-        blob.contains('nnina omukwano') ||
-        blob.contains('omukwano gwange') ||
-        blob.contains('what a friend')) {
-      return true;
-    }
-    return false;
+    return byNumber.containsKey(hymn.number);
   }
 
   static bool hasLanguage(Hymn hymn, String language) {

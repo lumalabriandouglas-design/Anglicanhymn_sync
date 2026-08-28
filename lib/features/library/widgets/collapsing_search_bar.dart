@@ -29,9 +29,12 @@ class _CollapsingSearchBarState extends State<CollapsingSearchBar> {
     final controller = widget.scrollController;
     if (controller == null) return;
 
-    if (controller.position.userScrollDirection == ScrollDirection.reverse && _isVisible) {
+    if (controller.position.userScrollDirection == ScrollDirection.reverse &&
+        _isVisible) {
       setState(() => _isVisible = false);
-    } else if (controller.position.userScrollDirection == ScrollDirection.forward && !_isVisible) {
+    } else if (controller.position.userScrollDirection ==
+            ScrollDirection.forward &&
+        !_isVisible) {
       setState(() => _isVisible = true);
     }
   }
@@ -44,6 +47,11 @@ class _CollapsingSearchBarState extends State<CollapsingSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final fill = isDark ? AppColors.cardNavy : Colors.white;
+    final text = isDark ? AppColors.textWhite : AppColors.lightTextPrimary;
+    final hint = isDark ? AppColors.textGrey : AppColors.lightTextSecondary;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
       curve: Curves.fastOutSlowIn,
@@ -54,14 +62,16 @@ class _CollapsingSearchBarState extends State<CollapsingSearchBar> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextField(
             onChanged: widget.onChanged,
-            style: const TextStyle(fontSize: 14, color: AppColors.textWhite),
+            style: TextStyle(fontSize: 14, color: text),
             decoration: InputDecoration(
               hintText: 'Search by number, title, or verse lyrics...',
-              hintStyle: const TextStyle(color: AppColors.textGrey, fontSize: 13),
-              prefixIcon: const Icon(Icons.search, color: AppColors.celestialGold, size: 20),
+              hintStyle: TextStyle(color: hint, fontSize: 13),
+              prefixIcon: const Icon(Icons.search,
+                  color: AppColors.celestialGold, size: 20),
               filled: true,
-              fillColor: AppColors.cardNavy,
-              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+              fillColor: fill,
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 16),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,

@@ -11,7 +11,20 @@ Luganda + English Anglican hymnal for **web and mobile** from one Flutter codeba
 - Favourites
 - Service setlists (add, reorder, liturgical role, play available audio)
 - Audio from Cloudflare R2, catalogue refreshed on launch
+- Full now-playing deck with lyrics, seek, repeat, shuffle, volume, and a persistent mini player
 - Light / dark / system theme
+
+## Audio player
+
+The player is a proper now-playing surface, not just a play button:
+
+- **Mini player** sits above the tab bar while a hymn is loaded. Tap to expand, swipe to skip, gold progress along the top.
+- **Now playing** shows hymn number art, Luganda + English titles, language toggle when both recordings exist, a seek bar, previous / play / next, repeat (off / all / one), shuffle, volume, and the hymn lyrics underneath.
+- **Queue** is every hymn that currently has audio. Play from the library, the reader, Listen, or a setlist — next/previous walk that list.
+- **Buffering and errors** are visible. Retry is on the deck if the stream fails.
+- Repeat-one loops the current hymn. Repeat-off stops at the end of the queue. Repeat-all continues.
+
+Playback uses `just_audio`. On web, the R2 bucket must allow the site origin (see CORS below).
 
 ## Audio (Cloudflare R2)
 

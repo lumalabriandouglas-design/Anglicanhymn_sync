@@ -123,6 +123,55 @@ class MoreBottomSheet extends StatelessWidget {
 
           const SizedBox(height: 22),
           Divider(color: isDark ? Colors.white12 : Colors.grey.shade200),
+          const SizedBox(height: 12),
+
+          Text(
+            'LYRICS LANGUAGE',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.8,
+              color: secondaryText,
+            ),
+          ),
+          const SizedBox(height: 10),
+          SegmentedButton<LyricsLanguage>(
+            style: ButtonStyle(
+              backgroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return primaryColor;
+                }
+                return isDark ? Colors.white.withOpacity(0.08) : Colors.grey.shade100;
+              }),
+              foregroundColor: WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.selected)) {
+                  return isDark ? AppColors.primaryNavy : Colors.white;
+                }
+                return textColor;
+              }),
+            ),
+            segments: const [
+              ButtonSegment(
+                value: LyricsLanguage.luganda,
+                label: Text('Luganda'),
+              ),
+              ButtonSegment(
+                value: LyricsLanguage.english,
+                label: Text('English'),
+              ),
+              ButtonSegment(
+                value: LyricsLanguage.both,
+                label: Text('Both'),
+              ),
+            ],
+            selected: {settings.lyricsLanguage},
+            onSelectionChanged: (Set<LyricsLanguage> selected) {
+              settings.setLyricsLanguage(selected.first);
+            },
+          ),
+
+          const SizedBox(height: 22),
+          Divider(color: isDark ? Colors.white12 : Colors.grey.shade200),
           const SizedBox(height: 8),
 
           // PRO Mode

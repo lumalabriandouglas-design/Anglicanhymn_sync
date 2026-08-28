@@ -44,7 +44,9 @@ class SlimMiniPlayer extends StatelessWidget {
           color: bg,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? Colors.white.withOpacity(0.06) : AppColors.lightDivider,
+            color: isDark
+                ? Colors.white.withOpacity(0.06)
+                : AppColors.lightDivider,
           ),
           boxShadow: [
             BoxShadow(
@@ -57,11 +59,13 @@ class SlimMiniPlayer extends StatelessWidget {
         child: Column(
           children: [
             ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
               child: LinearProgressIndicator(
                 value: audio.progress.clamp(0.0, 1.0),
                 backgroundColor: Colors.transparent,
-                valueColor: const AlwaysStoppedAnimation(AppColors.celestialGold),
+                valueColor:
+                    const AlwaysStoppedAnimation(AppColors.celestialGold),
                 minHeight: 2.5,
               ),
             ),
@@ -73,15 +77,30 @@ class SlimMiniPlayer extends StatelessWidget {
                     Container(
                       width: 44,
                       height: 44,
+                      alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: AppColors.celestialGold.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(
-                        Icons.menu_book_rounded,
-                        color: AppColors.celestialGold,
-                        size: 22,
-                      ),
+                      child: audio.isLoading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.celestialGold,
+                              ),
+                            )
+                          : Text(
+                              hymn.number,
+                              style: TextStyle(
+                                color: isDark
+                                    ? AppColors.celestialGold
+                                    : AppColors.primaryNavy,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                              ),
+                            ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -101,8 +120,18 @@ class SlimMiniPlayer extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            audio.isPlaying ? 'Playing' : 'Paused',
-                            style: TextStyle(color: subColor, fontSize: 11),
+                            audio.error ??
+                                (hymn.hasEnglishTitle
+                                    ? hymn.titleEnglish
+                                    : (audio.isPlaying ? 'Playing' : 'Paused')),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: audio.error != null
+                                  ? Colors.redAccent
+                                  : subColor,
+                              fontSize: 11,
+                            ),
                           ),
                         ],
                       ),
@@ -110,7 +139,7 @@ class SlimMiniPlayer extends StatelessWidget {
                     IconButton(
                       icon: const Icon(Icons.skip_previous_rounded, size: 26),
                       color: titleColor.withOpacity(0.7),
-                      onPressed: () => audio.playPrevious(),
+                      onPressed: audio.playPrevious,
                       visualDensity: VisualDensity.compact,
                     ),
                     Container(
@@ -129,13 +158,13 @@ class SlimMiniPlayer extends StatelessWidget {
                           color: AppColors.primaryNavy,
                           size: 26,
                         ),
-                        onPressed: () => audio.togglePlayPause(),
+                        onPressed: audio.togglePlayPause,
                       ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.skip_next_rounded, size: 26),
                       color: titleColor.withOpacity(0.7),
-                      onPressed: () => audio.playNext(),
+                      onPressed: audio.playNext,
                       visualDensity: VisualDensity.compact,
                     ),
                   ],

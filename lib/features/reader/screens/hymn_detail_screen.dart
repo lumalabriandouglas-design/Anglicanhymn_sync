@@ -10,6 +10,7 @@ import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
+import '../../player/widgets/player_deck.dart';
 import '../widgets/dual_lyrics_view.dart';
 import '../widgets/lyric_report_dialog.dart';
 
@@ -260,7 +261,17 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                       onPressed: hasAudio
                           ? () {
                               audioProvider.setHymns(hymnProvider.allHymns);
-                              audioProvider.playHymn(widget.hymn);
+                              audioProvider.playHymn(
+                                widget.hymn,
+                                language: settings.lyricsLanguage,
+                              );
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const PlayerDeck(),
+                                  fullscreenDialog: true,
+                                ),
+                              );
                             }
                           : null,
                     ),
