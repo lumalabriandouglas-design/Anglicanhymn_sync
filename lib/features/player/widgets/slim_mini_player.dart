@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../providers/audio_provider.dart';
-import '../widgets/player_deck.dart';
+import 'player_deck.dart';
 
 class SlimMiniPlayer extends StatelessWidget {
   const SlimMiniPlayer({super.key});
