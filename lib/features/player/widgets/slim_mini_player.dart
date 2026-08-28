@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../providers/audio_provider.dart';
-import '../screens/player_screen.dart';
+import '../widgets/player_deck.dart';
 
 class SlimMiniPlayer extends StatelessWidget {
   const SlimMiniPlayer({super.key});
@@ -11,16 +11,22 @@ class SlimMiniPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioProvider>();
-
     if (audio.currentHymn == null) return const SizedBox.shrink();
 
     final hymn = audio.currentHymn!;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bg = isDark ? const Color(0xFF161B2E) : Colors.white;
+    final titleColor = isDark ? Colors.white : AppColors.lightTextPrimary;
+    final subColor = isDark ? AppColors.textGrey : AppColors.lightTextSecondary;
 
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const PlayerScreen()),
+          MaterialPageRoute(
+            builder: (_) => const PlayerDeck(),
+            fullscreenDialog: true,
+          ),
         );
       },
       onHorizontalDragEnd: (details) {
@@ -35,12 +41,14 @@ class SlimMiniPlayer extends StatelessWidget {
         height: 72,
         margin: const EdgeInsets.fromLTRB(10, 0, 10, 8),
         decoration: BoxDecoration(
-          color: const Color(0xFF161B2E),
+          color: bg,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.06)),
+          border: Border.all(
+            color: isDark ? Colors.white.withOpacity(0.06) : AppColors.lightDivider,
+          ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.4),
+              color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -48,7 +56,6 @@ class SlimMiniPlayer extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // Progress line
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               child: LinearProgressIndicator(
@@ -63,7 +70,6 @@ class SlimMiniPlayer extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: Row(
                   children: [
-                    // Artwork
                     Container(
                       width: 44,
                       height: 44,
@@ -78,8 +84,6 @@ class SlimMiniPlayer extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 10),
-
-                    // Title
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -89,8 +93,8 @@ class SlimMiniPlayer extends StatelessWidget {
                             '${hymn.number}. ${hymn.title}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: titleColor,
                               fontWeight: FontWeight.w600,
                               fontSize: 13.5,
                             ),
@@ -98,24 +102,17 @@ class SlimMiniPlayer extends StatelessWidget {
                           const SizedBox(height: 2),
                           Text(
                             audio.isPlaying ? 'Playing' : 'Paused',
-                            style: TextStyle(
-                              color: AppColors.textGrey.withOpacity(0.85),
-                              fontSize: 11,
-                            ),
+                            style: TextStyle(color: subColor, fontSize: 11),
                           ),
                         ],
                       ),
                     ),
-
-                    // Previous
                     IconButton(
                       icon: const Icon(Icons.skip_previous_rounded, size: 26),
-                      color: Colors.white70,
+                      color: titleColor.withOpacity(0.7),
                       onPressed: () => audio.playPrevious(),
                       visualDensity: VisualDensity.compact,
                     ),
-
-                    // Play / Pause
                     Container(
                       width: 42,
                       height: 42,
@@ -126,18 +123,18 @@ class SlimMiniPlayer extends StatelessWidget {
                       child: IconButton(
                         padding: EdgeInsets.zero,
                         icon: Icon(
-                          audio.isPlaying ? Icons.pause_rounded : Icons.play_arrow_rounded,
-                          color: const Color(0xFF0B132B),
+                          audio.isPlaying
+                              ? Icons.pause_rounded
+                              : Icons.play_arrow_rounded,
+                          color: AppColors.primaryNavy,
                           size: 26,
                         ),
                         onPressed: () => audio.togglePlayPause(),
                       ),
                     ),
-
-                    // Next
                     IconButton(
                       icon: const Icon(Icons.skip_next_rounded, size: 26),
-                      color: Colors.white70,
+                      color: titleColor.withOpacity(0.7),
                       onPressed: () => audio.playNext(),
                       visualDensity: VisualDensity.compact,
                     ),
