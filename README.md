@@ -19,10 +19,11 @@ Luganda + English Anglican hymnal for **web and mobile** from one Flutter codeba
 The player is a proper now-playing surface, not just a play button:
 
 - **Mini player** sits above the tab bar while a hymn is loaded. Tap to expand, swipe to skip, gold progress along the top.
-- **Now playing** shows hymn number art, Luganda + English titles, language toggle when both recordings exist, a seek bar, previous / play / next, repeat (off / all / one), shuffle, volume, and the hymn lyrics underneath.
-- **Queue** is every hymn that currently has audio. Play from the library, the reader, Listen, or a setlist — next/previous walk that list.
+- **Now playing** shows hymn-number art (navy, gold ring, Anglican cross), Luganda + English titles, language toggle when both recordings exist, a seek bar, previous / play / next, repeat (off / all / one), shuffle, volume, sleep timer, and the hymn lyrics underneath (they follow the recording).
+- **Queue** is every hymn that currently has audio. Open it from the queue icon, or tap a number chip. Play from the library, the reader, Listen, or a setlist — next/previous walk that list.
 - **Buffering and errors** are visible. Retry is on the deck if the stream fails.
 - Repeat-one loops the current hymn. Repeat-off stops at the end of the queue. Repeat-all continues.
+- Sleep timer (15 / 30 / 45 / 60 minutes) stops playback when it ends.
 
 Playback uses `just_audio`. On web, the R2 bucket must allow the site origin (see CORS below).
 

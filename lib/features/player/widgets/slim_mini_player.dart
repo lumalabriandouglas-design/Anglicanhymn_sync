@@ -79,8 +79,11 @@ class SlimMiniPlayer extends StatelessWidget {
                       height: 44,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColors.celestialGold.withOpacity(0.12),
+                        color: AppColors.primaryNavy,
                         borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: AppColors.celestialGold.withOpacity(0.45),
+                        ),
                       ),
                       child: audio.isLoading
                           ? const SizedBox(
@@ -91,16 +94,20 @@ class SlimMiniPlayer extends StatelessWidget {
                                 color: AppColors.celestialGold,
                               ),
                             )
-                          : Text(
-                              hymn.number,
-                              style: TextStyle(
-                                color: isDark
-                                    ? AppColors.celestialGold
-                                    : AppColors.primaryNavy,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                              ),
-                            ),
+                          : audio.isPlaying
+                              ? const Icon(
+                                  Icons.equalizer_rounded,
+                                  color: AppColors.celestialGold,
+                                  size: 20,
+                                )
+                              : Text(
+                                  hymn.number,
+                                  style: const TextStyle(
+                                    color: AppColors.celestialGold,
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 13,
+                                  ),
+                                ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(

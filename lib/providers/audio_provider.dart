@@ -25,6 +25,8 @@ class AudioProvider extends ChangeNotifier {
   RepeatMode _repeat = RepeatMode.all;
   bool _shuffle = false;
   int _lastNotifiedMs = 0;
+  Timer? _sleepTimer;
+  DateTime? _sleepUntil;
 
   StreamSubscription? _playerStateSub;
   StreamSubscription? _positionSub;
@@ -46,6 +48,7 @@ class AudioProvider extends ChangeNotifier {
   LyricsLanguage get audioLanguage => _audioLanguage;
   RepeatMode get repeat => _repeat;
   bool get shuffle => _shuffle;
+  DateTime? get sleepUntil => _sleepUntil;
 
   List<Hymn> get playableHymns =>
       _allHymns.where(HymnAudio.hasAudio).toList();
@@ -87,6 +90,20 @@ class AudioProvider extends ChangeNotifier {
 
   void toggleShuffle() {
     _shuffle = !_shuffle;
+    notifyListeners();
+  }
+
+  void setSleepTimer(int? minutes) {
+    _sleepTimer?.cancel();
+    if (minutes == null || minutes <= 0) {
+      _sleepUntil = null;
+      notifyListeners();
+      return;
+    }
+    _sleepUntil = DateTime.now().add(Duration(minutes: minutes));
+    _sleepTimer = Timer(Duration(minutes: minutes), () {
+      unawaited(stop());
+    });
     notifyListeners();
   }
 
@@ -194,6 +211,15 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> skipBy(Duration delta) async {
+    final next = _position + delta;
+    final max = _duration == Duration.zero ? next : _duration;
+    final clamped = next < Duration.zero
+        ? Duration.zero
+        : (next > max ? max : next);
+    await seek(clamped);
+  }
+
   Future<void> setPlaybackSpeed(double speed) async {
     _currentSpeed = speed;
     await _audioService.setSpeed(speed);
@@ -207,6 +233,8 @@ class AudioProvider extends ChangeNotifier {
   }
 
   Future<void> stop() async {
+    _sleepTimer?.cancel();
+    _sleepUntil = null;
     await _audioService.stop();
     _currentHymn = null;
     _isPlaying = false;
@@ -252,6 +280,7 @@ class AudioProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _sleepTimer?.cancel();
     _playerStateSub?.cancel();
     _positionSub?.cancel();
     _durationSub?.cancel();
