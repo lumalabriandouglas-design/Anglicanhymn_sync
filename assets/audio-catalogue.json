@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "r2Base": "https://pub-22426af78c4e41d989b240b35aa21225.r2.dev",
+  "naming": {
+    "hymn": "hymns/{number}-{lang}.m4a",
+    "extra": "extras/{slug}.m4a",
+    "langs": ["lg", "en"]
+  },
+  "tracks": [
+    {
+      "id": "332-en",
+      "hymnNumber": "332",
+      "language": "english",
+      "title": "What a Friend We Have in Jesus",
+      "url": "https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a",
+      "type": "hymn"
+    }
+  ]
+}

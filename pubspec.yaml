@@ -15,14 +15,13 @@ dependencies:
   audio_service: ^0.18.12
   google_fonts: ^6.1.0
   wakelock_plus: ^1.1.4
-  mobile_scanner: ^6.0.0  # Or run: flutter pub upgrade mobile_scanner
+  mobile_scanner: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.13.1"
 
-# Automatically generates phone launcher icons for Android, iOS, and Web
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
@@ -38,4 +37,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/hymns-full.json
+    - assets/audio-catalogue.json
     - assets/images/app_icon.png
