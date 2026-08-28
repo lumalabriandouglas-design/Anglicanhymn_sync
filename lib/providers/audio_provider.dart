@@ -5,6 +5,7 @@ import 'package:just_audio/just_audio.dart';
 import '../core/constants/hymn_audio.dart';
 import '../core/services/audio_player_service.dart';
 import '../models/hymn.dart';
+import 'settings_provider.dart';
 
 class AudioProvider extends ChangeNotifier {
   final AudioPlayerService _audioService;
@@ -17,6 +18,7 @@ class AudioProvider extends ChangeNotifier {
   Duration _duration = Duration.zero;
   bool _isLoading = false;
   String? _error;
+  LyricsLanguage _audioLanguage = LyricsLanguage.english;
 
   StreamSubscription? _playerStateSub;
   StreamSubscription? _positionSub;
@@ -34,6 +36,7 @@ class AudioProvider extends ChangeNotifier {
   Duration get duration => _duration;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  LyricsLanguage get audioLanguage => _audioLanguage;
 
   List<Hymn> get playableHymns =>
       _allHymns.where(HymnAudio.hasAudio).toList();
@@ -45,6 +48,11 @@ class AudioProvider extends ChangeNotifier {
 
   void setHymns(List<Hymn> hymns) {
     _allHymns = hymns;
+  }
+
+  void setAudioLanguage(LyricsLanguage language) {
+    _audioLanguage = language;
+    notifyListeners();
   }
 
   void _initListeners() {
@@ -76,8 +84,14 @@ class AudioProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> playHymn(Hymn hymn, {String? audioUrl}) async {
-    final url = audioUrl ?? HymnAudio.urlFor(hymn);
+  Future<void> playHymn(
+    Hymn hymn, {
+    String? audioUrl,
+    LyricsLanguage? language,
+  }) async {
+    if (language != null) _audioLanguage = language;
+
+    final url = audioUrl ?? HymnAudio.urlFor(hymn, language: _audioLanguage);
     if (url == null) {
       _error = 'No audio for this hymn yet';
       _isLoading = false;
@@ -95,7 +109,7 @@ class AudioProvider extends ChangeNotifier {
       await _audioService.setSpeed(_currentSpeed);
       await _audioService.play();
     } catch (e) {
-      _error = 'Failed to play audio';
+      _error = 'Failed to play audio. On web, check R2 CORS.';
       debugPrint('playHymn error: $e');
       _isLoading = false;
       notifyListeners();

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
+import '../core/constants/hymn_audio.dart';
 import '../core/services/storage_service.dart';
 import '../core/utils/search_engine.dart';
 import '../models/hymn.dart';
@@ -21,11 +22,9 @@ class HymnProvider extends ChangeNotifier {
   List<Hymn> get allHymns => _allHymns;
   String get searchQuery => _searchQuery;
 
-  /// Returns favorite hymns
   List<Hymn> get favoriteHymns =>
       _allHymns.where((h) => h.isFavorite).toList();
 
-  /// Returns filtered hymns matching search query
   List<Hymn> get filteredHymns {
     if (_searchQuery.trim().isEmpty) {
       return _allHymns;
@@ -33,13 +32,14 @@ class HymnProvider extends ChangeNotifier {
     return SearchEngine.searchHymns(_allHymns, _searchQuery);
   }
 
-  /// Loads JSON asset database and applies stored favorites
   Future<void> loadHymns() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
+      await HymnAudio.load();
+
       final String jsonString =
           await rootBundle.loadString('assets/hymns-full.json');
       final List<dynamic> data = json.decode(jsonString);
@@ -63,13 +63,11 @@ class HymnProvider extends ChangeNotifier {
     }
   }
 
-  /// Updates current search query
   void setSearchQuery(String query) {
     _searchQuery = query;
     notifyListeners();
   }
 
-  /// Toggles favorite state and persists to StorageService
   Future<void> toggleFavorite(Hymn hymn) async {
     hymn.isFavorite = !hymn.isFavorite;
     final favoriteIds =
