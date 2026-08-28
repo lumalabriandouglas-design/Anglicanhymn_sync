@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
+import 'breakpoints.dart';
+
 class ResponsiveCenter extends StatelessWidget {
   final Widget child;
-  final double maxContentWidth;
+  final double? maxContentWidth;
 
   const ResponsiveCenter({
     super.key,
     required this.child,
-    this.maxContentWidth = 720.0, // Optimal reading width for tablets/desktop web
+    this.maxContentWidth,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    final maxWidth = maxContentWidth ?? Breakpoints.contentWidth(context);
+    return Align(
+      alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: maxContentWidth),
+        constraints: BoxConstraints(maxWidth: maxWidth),
         child: child,
       ),
     );

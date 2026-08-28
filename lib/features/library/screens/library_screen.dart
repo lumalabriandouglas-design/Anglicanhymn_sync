@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/widgets/breakpoints.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -29,6 +30,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
     final audioProvider = context.watch<AudioProvider>();
     final settings = context.watch<SettingsProvider>();
     final hymns = hymnProvider.filteredHymns;
+    final columns = Breakpoints.libraryColumns(context);
 
     if (hymnProvider.isLoading) {
       return const Center(
@@ -50,24 +52,49 @@ class _LibraryScreenState extends State<LibraryScreen> {
                     style: TextStyle(color: Colors.grey),
                   ),
                 )
-              : ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  itemCount: hymns.length,
-                  itemBuilder: (context, index) {
-                    final hymn = hymns[index];
-                    return HymnTile(
-                      hymn: hymn,
-                      onPlayTap: () {
-                        audioProvider.setHymns(hymnProvider.allHymns);
-                        audioProvider.playHymn(
-                          hymn,
-                          language: settings.lyricsLanguage,
+              : columns == 1
+                  ? ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      itemCount: hymns.length,
+                      itemBuilder: (context, index) {
+                        final hymn = hymns[index];
+                        return HymnTile(
+                          hymn: hymn,
+                          onPlayTap: () {
+                            audioProvider.setHymns(hymnProvider.allHymns);
+                            audioProvider.playHymn(
+                              hymn,
+                              language: settings.lyricsLanguage,
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    )
+                  : GridView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: columns,
+                        mainAxisExtent: 88,
+                        crossAxisSpacing: 12,
+                        mainAxisSpacing: 4,
+                      ),
+                      itemCount: hymns.length,
+                      itemBuilder: (context, index) {
+                        final hymn = hymns[index];
+                        return HymnTile(
+                          hymn: hymn,
+                          onPlayTap: () {
+                            audioProvider.setHymns(hymnProvider.allHymns);
+                            audioProvider.playHymn(
+                              hymn,
+                              language: settings.lyricsLanguage,
+                            );
+                          },
+                        );
+                      },
+                    ),
         ),
       ],
     );

@@ -1,12 +1,12 @@
 {
-    "name": "AnglicanHymnSync",
-    "short_name": "AnglicanHymnSync",
+    "name": "Anglican Hymn Sync",
+    "short_name": "Hymn Sync",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0B132B",
+    "background_color": "#F8F6F1",
     "theme_color": "#0B132B",
-    "description": "Modern Anglican Hymnal App",
-    "orientation": "portrait-primary",
+    "description": "Luganda and English Anglican hymnal",
+    "orientation": "any",
     "prefer_related_applications": false,
     "icons": [
         {

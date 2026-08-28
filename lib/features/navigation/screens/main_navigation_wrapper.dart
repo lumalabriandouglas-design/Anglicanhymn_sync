@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/breakpoints.dart';
 import '../../../core/widgets/responsive_center.dart';
 import '../../../providers/audio_provider.dart';
 import '../../favorites/screens/favorites_screen.dart';
@@ -26,10 +27,28 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     FavoritesScreen(),
   ];
 
+  void _openSettings() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => const MoreBottomSheet(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioProvider>();
     final hasPlayer = audio.currentHymn != null;
+    final wide = Breakpoints.useRail(context);
+    final padding = MediaQuery.paddingOf(context);
+
+    final body = ResponsiveCenter(
+      child: IndexedStack(
+        index: _currentIndex,
+        children: _screens,
+      ),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -38,47 +57,66 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
           IconButton(
             icon: const Icon(Icons.tune_rounded),
             tooltip: 'Settings & Tools',
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (_) => const MoreBottomSheet(),
-              );
-            },
+            onPressed: _openSettings,
           ),
         ],
       ),
-      body: ResponsiveCenter(
-        maxContentWidth: 900.0,
-        child: IndexedStack(
-          index: _currentIndex,
-          children: _screens,
-        ),
-      ),
+      body: wide
+          ? Row(
+              children: [
+                NavigationRail(
+                  selectedIndex: _currentIndex,
+                  onDestinationSelected: (index) =>
+                      setState(() => _currentIndex = index),
+                  labelType: NavigationRailLabelType.all,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.menu_book_outlined),
+                      selectedIcon: Icon(Icons.menu_book_rounded),
+                      label: Text('Library'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.headphones_outlined),
+                      selectedIcon: Icon(Icons.headphones_rounded),
+                      label: Text('Player'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.favorite_outline_rounded),
+                      selectedIcon: Icon(Icons.favorite_rounded),
+                      label: Text('Favorites'),
+                    ),
+                  ],
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(child: body),
+              ],
+            )
+          : body,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Mini player appears here when a hymn is playing
           if (hasPlayer) const SlimMiniPlayer(),
-          BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setState(() => _currentIndex = index),
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.menu_book_rounded),
-                label: 'Library',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.headphones_rounded),
-                label: 'Player',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_rounded),
-                label: 'Favorites',
-              ),
-            ],
-          ),
+          if (!wide)
+            BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) => setState(() => _currentIndex = index),
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.menu_book_rounded),
+                  label: 'Library',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.headphones_rounded),
+                  label: 'Player',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite_rounded),
+                  label: 'Favorites',
+                ),
+              ],
+            )
+          else
+            SizedBox(height: padding.bottom),
         ],
       ),
     );
