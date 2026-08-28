@@ -10,7 +10,7 @@ Luganda + English Anglican hymnal for **web and mobile** from one Flutter codeba
 - Dual lyrics (Luganda / English / both)
 - Favourites
 - Service setlists (add, reorder, liturgical role, play available audio)
-- Audio from Cloudflare R2
+- Audio from Cloudflare R2, catalogue refreshed on launch
 - Light / dark / system theme
 
 ## Audio (Cloudflare R2)
@@ -19,18 +19,48 @@ Public bucket prefix:
 
 `https://pub-22426af78c4e41d989b240b35aa21225.r2.dev`
 
-### Add a hymn recording
-1. Upload with a stable name:
+The app loads this file on every launch:
+
+`https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/audio-catalogue.json`
+
+Order of lookup:
+1. R2 catalogue (latest)
+2. Last successful catalogue cached on the device
+3. Bundled `assets/audio-catalogue.json`
+4. Hardcoded hymn 332 fallback
+
+### Add a recording without rebuilding the app
+1. Upload audio:
    - `hymns/332-en.m4a`
    - `hymns/332-lg.m4a`
    - `extras/christmas-01.m4a`
-2. Add a row to `assets/audio-catalogue.json`.
-3. Redeploy web / rebuild the app.
+2. Upload an updated `audio-catalogue.json` to the **root** of the same public R2 bucket.
+3. Open or refresh the website / app. New tracks appear without a store release.
+
+Keep `assets/audio-catalogue.json` in git in sync when you can, so first-time offline installs still have a baseline.
 
 Current test track is hymn **332** (English: What a Friend We Have in Jesus).
 
+Example catalogue:
+
+```json
+{
+  "version": 1,
+  "tracks": [
+    {
+      "id": "332-en",
+      "hymnNumber": "332",
+      "language": "english",
+      "title": "What a Friend We Have in Jesus",
+      "url": "https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a",
+      "type": "hymn"
+    }
+  ]
+}
+```
+
 ### Web CORS (required)
-In the R2 bucket CORS policy allow the Vercel origin or playback fails in the browser:
+In the R2 bucket CORS policy allow the Vercel origin or both audio and the catalogue fail in the browser:
 
 ```json
 [
@@ -48,7 +78,7 @@ In the R2 bucket CORS policy allow the Vercel origin or playback fails in the br
 ]
 ```
 
-Also enable **public access** on the audio objects (already working for the test file).
+Also enable **public access** on the audio objects and on `audio-catalogue.json`.
 
 ## Run
 ```bash

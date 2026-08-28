@@ -14,6 +14,7 @@ class HymnProvider extends ChangeNotifier {
   String _searchQuery = '';
   bool _isLoading = true;
   String? _errorMessage;
+  bool _audioCatalogueReady = false;
 
   HymnProvider(this._storageService);
 
@@ -21,6 +22,7 @@ class HymnProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   List<Hymn> get allHymns => _allHymns;
   String get searchQuery => _searchQuery;
+  bool get audioCatalogueReady => _audioCatalogueReady;
 
   List<Hymn> get favoriteHymns =>
       _allHymns.where((h) => h.isFavorite).toList();
@@ -38,7 +40,7 @@ class HymnProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await HymnAudio.load();
+      await HymnAudio.loadLocal(_storageService);
 
       final String jsonString =
           await rootBundle.loadString('assets/hymns-full.json');
@@ -61,6 +63,17 @@ class HymnProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+
+    // Do not block the hymn book on the network.
+    final updated = await HymnAudio.refreshFromRemote(_storageService);
+    _audioCatalogueReady = HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
+    if (updated) notifyListeners();
+  }
+
+  Future<void> refreshAudioCatalogue() async {
+    final updated = await HymnAudio.refreshFromRemote(_storageService);
+    _audioCatalogueReady = HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
+    if (updated) notifyListeners();
   }
 
   void setSearchQuery(String query) {

@@ -2,10 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../../models/audio_track.dart';
 import '../../models/hymn.dart';
 import '../../providers/settings_provider.dart';
+import '../services/storage_service.dart';
 
 class HymnAudio {
   static const String r2Base =
@@ -14,38 +16,90 @@ class HymnAudio {
   static const String remoteCatalogueUrl =
       'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/audio-catalogue.json';
 
+  static const String cacheKey = 'app_audio_catalogue_json';
+
   static List<AudioTrack> tracks = [];
-  static bool _loaded = false;
+  static bool loadedFromRemote = false;
 
   static const Map<String, String> byNumber = {
     '332':
         'https://pub-22426af78c4e41d989b240b35aa21225.r2.dev/What%20A%20Friend%20We%20Have%20In%20Jesus%20Lyric%20Video%20Lydia%20Walker%20Acoustic%20Hymns%20with%20Lyrics-128.m4a',
   };
 
-  static Future<void> load() async {
-    if (_loaded && tracks.isNotEmpty) return;
+  static List<AudioTrack> _parse(String raw) {
+    final decoded = json.decode(raw);
+    final list = decoded is Map<String, dynamic>
+        ? (decoded['tracks'] as List<dynamic>? ?? [])
+        : (decoded is List ? decoded : <dynamic>[]);
+    return list
+        .whereType<Map>()
+        .map((e) => AudioTrack.fromJson(Map<String, dynamic>.from(e)))
+        .where((t) => t.url.isNotEmpty)
+        .toList();
+  }
+
+  static List<AudioTrack> _fallback332() {
+    return [
+      AudioTrack(
+        id: '332-en',
+        hymnNumber: '332',
+        language: 'english',
+        title: 'What a Friend We Have in Jesus',
+        url: byNumber['332']!,
+        type: AudioTrackType.hymn,
+      ),
+    ];
+  }
+
+  /// Instant local load: cache, then bundled asset, then hardcoded 332.
+  static Future<void> loadLocal([StorageService? storage]) async {
+    try {
+      final cached = storage?.getString(cacheKey);
+      if (cached != null && cached.trim().isNotEmpty) {
+        final parsed = _parse(cached);
+        if (parsed.isNotEmpty) {
+          tracks = parsed;
+          return;
+        }
+      }
+    } catch (e) {
+      debugPrint('HymnAudio cache parse failed: $e');
+    }
 
     try {
       final raw = await rootBundle.loadString('assets/audio-catalogue.json');
-      final decoded = json.decode(raw) as Map<String, dynamic>;
-      final list = decoded['tracks'] as List<dynamic>? ?? [];
-      tracks = list
-          .map((e) => AudioTrack.fromJson(e as Map<String, dynamic>))
-          .toList();
-      _loaded = true;
+      final parsed = _parse(raw);
+      tracks = parsed.isNotEmpty ? parsed : _fallback332();
     } catch (e) {
-      debugPrint('HymnAudio.load failed: $e');
-      tracks = [
-        AudioTrack(
-          id: '332-en',
-          hymnNumber: '332',
-          language: 'english',
-          title: 'What a Friend We Have in Jesus',
-          url: byNumber['332']!,
-          type: AudioTrackType.hymn,
-        ),
-      ];
-      _loaded = true;
+      debugPrint('HymnAudio bundled load failed: $e');
+      tracks = _fallback332();
+    }
+  }
+
+  /// Pull latest catalogue from R2. Returns true if tracks changed.
+  static Future<bool> refreshFromRemote([StorageService? storage]) async {
+    try {
+      final response = await http
+          .get(Uri.parse(remoteCatalogueUrl))
+          .timeout(const Duration(seconds: 8));
+      if (response.statusCode != 200 || response.body.trim().isEmpty) {
+        debugPrint('HymnAudio remote status ${response.statusCode}');
+        return false;
+      }
+
+      final parsed = _parse(response.body);
+      if (parsed.isEmpty) return false;
+
+      final changed = json.encode(tracks.map((t) => t.toJson()).toList()) !=
+          json.encode(parsed.map((t) => t.toJson()).toList());
+
+      tracks = parsed;
+      loadedFromRemote = true;
+      await storage?.setString(cacheKey, response.body);
+      return changed || true;
+    } catch (e) {
+      debugPrint('HymnAudio remote load failed: $e');
+      return false;
     }
   }
 
