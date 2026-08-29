@@ -573,8 +573,15 @@ class HymnNumberArt extends StatelessWidget {
       height: size,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.primaryNavy,
           borderRadius: BorderRadius.circular(22),
+          gradient: const RadialGradient(
+            center: Alignment(0, -0.25),
+            radius: 0.9,
+            colors: [
+              Color(0xFF1C2541),
+              AppColors.primaryNavy,
+            ],
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.celestialGold.withOpacity(0.22),
@@ -587,10 +594,10 @@ class HymnNumberArt extends StatelessWidget {
           children: [
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(size * 0.11),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    shape: BoxShape.circle,
                     border: Border.all(
                       color: AppColors.celestialGold.withOpacity(0.28),
                     ),
@@ -600,12 +607,12 @@ class HymnNumberArt extends StatelessWidget {
             ),
             Positioned.fill(
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(size * 0.18),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
+                    shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.celestialGold.withOpacity(0.55),
+                      color: AppColors.celestialGold.withOpacity(0.62),
                     ),
                   ),
                 ),
