@@ -39,4 +39,5 @@ flutter:
   assets:
     - assets/hymns-full.json
     - assets/audio-catalogue.json
+    - assets/english-overlay.json
     - assets/images/app_icon.png

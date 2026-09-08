@@ -111,7 +111,6 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasAudio = HymnAudio.hasAudio(widget.hymn);
 
-    // Clean title for display
     final cleanTitle = widget.hymn.title
         .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')
         .replaceAll(' Song Lyrics', '')
@@ -127,12 +126,16 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Hymn ${widget.hymn.number}',
+              widget.hymn.hasEnglishTitle
+                  ? 'Hymn ${widget.hymn.number}  ·  ${widget.hymn.titleEnglish}'
+                  : 'Hymn ${widget.hymn.number}',
               style: TextStyle(
                 fontSize: 13,
                 color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
                 fontWeight: FontWeight.w500,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 2),
             Text(
@@ -176,12 +179,10 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
       ),
       body: Column(
         children: [
-          // Subtle divider under AppBar
           Container(
             height: 1,
             color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.withOpacity(0.15),
           ),
-
           Expanded(
             child: DualLyricsView(
               lyricsLuganda: widget.hymn.lyricsLuganda,
@@ -191,8 +192,6 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               scrollController: _scrollController,
             ),
           ),
-
-          // Bottom control bar
           Container(
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
             decoration: BoxDecoration(
@@ -209,7 +208,6 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               top: false,
               child: Row(
                 children: [
-                  // Auto-scroll button
                   Container(
                     decoration: BoxDecoration(
                       color: isDark
@@ -228,8 +226,6 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
-
-                  // Play Audio button
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(

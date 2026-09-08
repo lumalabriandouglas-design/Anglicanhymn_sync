@@ -28,7 +28,6 @@ class HymnTile extends StatelessWidget {
         : AppColors.celestialGold.withOpacity(0.12);
     final numberColor = isDark ? AppColors.celestialGold : AppColors.primaryNavy;
 
-    // Get a clean first line for the preview
     final lyricPreview = hymn.lyricsLuganda
         .split('\n')
         .map((e) => e.trim())
@@ -70,7 +69,6 @@ class HymnTile extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(
               children: [
-                // Number badge
                 Container(
                   width: 46,
                   height: 46,
@@ -89,25 +87,54 @@ class HymnTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 14),
-
-                // Title + preview
-                                Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        hymn.title
-                            .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')
-                            .replaceAll(' Song Lyrics', '')
-                            .trim(),
-                        style: GoogleFonts.lora(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15.5,
-                          color: titleColor,
-                          height: 1.25,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              hymn.title
+                                  .replaceAll(
+                                      RegExp(r'^OLUYIMBA\s+\d+:\s*',
+                                          caseSensitive: false),
+                                      '')
+                                  .replaceAll(' Song Lyrics', '')
+                                  .trim(),
+                              style: GoogleFonts.lora(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 15.5,
+                                color: titleColor,
+                                height: 1.25,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          if (hymn.hasEnglishLyrics) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 5, vertical: 2),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(
+                                  color: AppColors.celestialGold.withOpacity(0.7),
+                                ),
+                              ),
+                              child: const Text(
+                                'EN',
+                                style: TextStyle(
+                                  color: AppColors.celestialGold,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.4,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -123,12 +150,13 @@ class HymnTile extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 if (HymnAudio.hasAudio(hymn))
                   IconButton(
                     icon: Icon(
                       Icons.play_circle_outline_rounded,
-                      color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+                      color: isDark
+                          ? AppColors.celestialGold
+                          : AppColors.primaryNavy,
                       size: 28,
                     ),
                     onPressed: onPlayTap,

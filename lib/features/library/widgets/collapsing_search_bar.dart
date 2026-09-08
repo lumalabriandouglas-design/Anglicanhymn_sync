@@ -64,7 +64,7 @@ class _CollapsingSearchBarState extends State<CollapsingSearchBar> {
             onChanged: widget.onChanged,
             style: TextStyle(fontSize: 14, color: text),
             decoration: InputDecoration(
-              hintText: 'Search by number, title, or verse lyrics...',
+              hintText: 'Number, Luganda or English title, lyrics...',
               hintStyle: TextStyle(color: hint, fontSize: 13),
               prefixIcon: const Icon(Icons.search,
                   color: AppColors.celestialGold, size: 20),

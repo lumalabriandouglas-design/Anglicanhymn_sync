@@ -20,6 +20,23 @@ class Hymn {
   });
 
   bool get hasEnglishTitle => titleEnglish.trim().isNotEmpty;
+  bool get hasEnglishLyrics => lyricsEnglish.trim().isNotEmpty;
+
+  Hymn copyWith({
+    String? titleEnglish,
+    String? lyricsEnglish,
+    bool? isFavorite,
+  }) {
+    return Hymn(
+      number: number,
+      title: title,
+      titleEnglish: titleEnglish ?? this.titleEnglish,
+      lyricsLuganda: lyricsLuganda,
+      lyricsEnglish: lyricsEnglish ?? this.lyricsEnglish,
+      audioUrl: audioUrl,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
+  }
 
   factory Hymn.fromJson(Map<String, dynamic> json, [int? index]) {
     final rawLuganda =

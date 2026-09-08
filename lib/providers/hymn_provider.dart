@@ -15,6 +15,7 @@ class HymnProvider extends ChangeNotifier {
   bool _isLoading = true;
   String? _errorMessage;
   bool _audioCatalogueReady = false;
+  bool _englishOnly = false;
 
   HymnProvider(this._storageService);
 
@@ -23,15 +24,21 @@ class HymnProvider extends ChangeNotifier {
   List<Hymn> get allHymns => _allHymns;
   String get searchQuery => _searchQuery;
   bool get audioCatalogueReady => _audioCatalogueReady;
+  bool get englishOnly => _englishOnly;
+  int get englishCount =>
+      _allHymns.where((h) => h.hasEnglishLyrics).length;
 
   List<Hymn> get favoriteHymns =>
       _allHymns.where((h) => h.isFavorite).toList();
 
   List<Hymn> get filteredHymns {
+    var list = _englishOnly
+        ? _allHymns.where((h) => h.hasEnglishLyrics).toList()
+        : _allHymns;
     if (_searchQuery.trim().isEmpty) {
-      return _allHymns;
+      return list;
     }
-    return SearchEngine.searchHymns(_allHymns, _searchQuery);
+    return SearchEngine.searchHymns(list, _searchQuery);
   }
 
   Future<void> loadHymns() async {
@@ -55,6 +62,25 @@ class HymnProvider extends ChangeNotifier {
         }
         return hymn;
       }).toList();
+
+      try {
+        final overlayRaw =
+            await rootBundle.loadString('assets/english-overlay.json');
+        final overlay = json.decode(overlayRaw) as Map<String, dynamic>;
+        _allHymns = _allHymns.map((h) {
+          final extra = overlay[h.number];
+          if (extra is Map) {
+            return h.copyWith(
+              titleEnglish: extra['titleEnglish']?.toString() ?? h.titleEnglish,
+              lyricsEnglish:
+                  extra['lyricsEnglish']?.toString() ?? h.lyricsEnglish,
+            );
+          }
+          return h;
+        }).toList();
+      } catch (e) {
+        debugPrint('English overlay skipped: $e');
+      }
     } catch (e) {
       _errorMessage = 'Failed to load hymn book. Please check the data file.';
       debugPrint('Error loading hymns database: $e');
@@ -66,18 +92,25 @@ class HymnProvider extends ChangeNotifier {
 
     // Do not block the hymn book on the network.
     final updated = await HymnAudio.refreshFromRemote(_storageService);
-    _audioCatalogueReady = HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
+    _audioCatalogueReady =
+        HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
     if (updated) notifyListeners();
   }
 
   Future<void> refreshAudioCatalogue() async {
     final updated = await HymnAudio.refreshFromRemote(_storageService);
-    _audioCatalogueReady = HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
+    _audioCatalogueReady =
+        HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
     if (updated) notifyListeners();
   }
 
   void setSearchQuery(String query) {
     _searchQuery = query;
+    notifyListeners();
+  }
+
+  void setEnglishOnly(bool value) {
+    _englishOnly = value;
     notifyListeners();
   }
 
