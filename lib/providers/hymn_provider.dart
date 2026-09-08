@@ -70,10 +70,12 @@ class HymnProvider extends ChangeNotifier {
         _allHymns = _allHymns.map((h) {
           final extra = overlay[h.number];
           if (extra is Map) {
+            final title = extra['titleEnglish']?.toString().trim() ?? '';
+            final lyrics = extra['lyricsEnglish']?.toString().trim() ?? '';
+            if (title.isEmpty && lyrics.isEmpty) return h;
             return h.copyWith(
-              titleEnglish: extra['titleEnglish']?.toString() ?? h.titleEnglish,
-              lyricsEnglish:
-                  extra['lyricsEnglish']?.toString() ?? h.lyricsEnglish,
+              titleEnglish: title.isNotEmpty ? title : h.titleEnglish,
+              lyricsEnglish: lyrics.isNotEmpty ? lyrics : h.lyricsEnglish,
             );
           }
           return h;

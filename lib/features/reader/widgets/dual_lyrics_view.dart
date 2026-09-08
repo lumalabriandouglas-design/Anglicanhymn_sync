@@ -42,6 +42,9 @@ class _DualLyricsViewState extends State<DualLyricsView> {
         _currentPage = 2;
         break;
     }
+    if (widget.lyricsEnglish.trim().isEmpty) {
+      _currentPage = 0;
+    }
     _pageController = PageController(initialPage: _currentPage == 2 ? 0 : _currentPage);
   }
 
@@ -83,18 +86,20 @@ class _DualLyricsViewState extends State<DualLyricsView> {
 
           // Content
           Expanded(
-            child: _currentPage == 2
-                ? _buildSideBySide()
-                : PageView(
-                    controller: _pageController,
-                    onPageChanged: (index) {
-                      setState(() => _currentPage = index);
-                    },
-                    children: [
-                      _buildSingleLanguage(widget.lyricsLuganda),
-                      _buildSingleLanguage(widget.lyricsEnglish),
-                    ],
-                  ),
+            child: !hasEnglish
+                ? _buildSingleLanguage(widget.lyricsLuganda)
+                : _currentPage == 2
+                    ? _buildSideBySide()
+                    : PageView(
+                        controller: _pageController,
+                        onPageChanged: (index) {
+                          setState(() => _currentPage = index);
+                        },
+                        children: [
+                          _buildSingleLanguage(widget.lyricsLuganda),
+                          _buildSingleLanguage(widget.lyricsEnglish),
+                        ],
+                      ),
           ),
         ],
       ),
