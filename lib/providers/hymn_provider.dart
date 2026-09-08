@@ -83,6 +83,9 @@ class HymnProvider extends ChangeNotifier {
       } catch (e) {
         debugPrint('English overlay skipped: $e');
       }
+
+      // 193 is Mugabi w'ebirabo. Rock of Ages belongs on 176.
+      _allHymns = _allHymns.map(_correctEnglish).toList();
     } catch (e) {
       _errorMessage = 'Failed to load hymn book. Please check the data file.';
       debugPrint('Error loading hymns database: $e');
@@ -97,6 +100,13 @@ class HymnProvider extends ChangeNotifier {
     _audioCatalogueReady =
         HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
     if (updated) notifyListeners();
+  }
+
+  Hymn _correctEnglish(Hymn hymn) {
+    if (hymn.number == '193') {
+      return hymn.copyWith(titleEnglish: '', lyricsEnglish: '');
+    }
+    return hymn;
   }
 
   Future<void> refreshAudioCatalogue() async {

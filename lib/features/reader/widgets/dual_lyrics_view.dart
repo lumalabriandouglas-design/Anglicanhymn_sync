@@ -49,6 +49,14 @@ class _DualLyricsViewState extends State<DualLyricsView> {
   }
 
   @override
+  void didUpdateWidget(covariant DualLyricsView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.lyricsEnglish.trim().isEmpty && _currentPage != 0) {
+      _currentPage = 0;
+    }
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
