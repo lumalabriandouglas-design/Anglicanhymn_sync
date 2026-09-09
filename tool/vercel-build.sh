@@ -13,6 +13,9 @@ if [[ ! -x "$FLUTTER_DIR/bin/flutter" ]]; then
   tar -xJf /tmp/flutter.tar.xz -C "$HOME"
 fi
 
+# Vercel extracts Flutter as a different user; git refuses the SDK without this.
+git config --global --add safe.directory "$FLUTTER_DIR"
+
 export PATH="$FLUTTER_DIR/bin:$PATH"
 export PUB_CACHE="${PUB_CACHE:-$HOME/.pub-cache}"
 export CI=true
