@@ -2,5 +2,11 @@
   "framework": null,
   "installCommand": "true",
   "buildCommand": "bash tool/vercel-build.sh",
-  "outputDirectory": "build/web"
+  "outputDirectory": "build/web",
+  "ignoreCommand": "test ! -f pubspec.yaml",
+  "git": {
+    "deploymentEnabled": {
+      "gh-pages": false
+    }
+  }
 }
