@@ -1,6 +1,6 @@
 {
   "framework": null,
   "installCommand": "true",
-  "buildCommand": "bash -lc 'rm -rf build/web && mkdir -p build/web && find . -mindepth 1 -maxdepth 1 ! -name build ! -name .git ! -name .vercel -exec cp -a {} build/web/ \\;'",
+  "buildCommand": "rm -rf build && mkdir -p build/web && cp -a assets canvaskit icons index.html main.dart.js flutter.js flutter_bootstrap.js flutter_service_worker.js favicon.png app_icon.png manifest.json version.json vercel.json build/web/",
   "outputDirectory": "build/web"
 }
