@@ -19,6 +19,9 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build web --release --base-href /Anglicanhymn_sync/
+      # gh-pages is a static dump. Vercel still tries to build that branch,
+      # so ship a vercel.json that copies files instead of running Flutter.
+      - run: cp tool/gh-pages-vercel.json build/web/vercel.json
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
