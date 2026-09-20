@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -65,12 +66,7 @@ class FavoritesScreen extends StatelessWidget {
             );
           },
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => HymnDetailScreen(hymn: hymn),
-              ),
-            );
+            AppNav.push(context, HymnDetailScreen(hymn: hymn));
           },
         );
       },

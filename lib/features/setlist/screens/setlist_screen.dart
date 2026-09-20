@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../providers/setlist_provider.dart';
 import '../widgets/create_setlist_dialog.dart';
 import 'setlist_detail_screen.dart';
@@ -29,11 +30,9 @@ class SetlistScreen extends StatelessWidget {
           if (newSetlist != null) {
             await setlistProvider.addSetlist(newSetlist);
             if (!context.mounted) return;
-            Navigator.push(
+            AppNav.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => SetlistDetailScreen(setlistId: newSetlist.id),
-              ),
+              SetlistDetailScreen(setlistId: newSetlist.id),
             );
           }
         },
@@ -67,11 +66,9 @@ class SetlistScreen extends StatelessWidget {
                       onPressed: () => setlistProvider.deleteSetlist(setlist.id),
                     ),
                     onTap: () {
-                      Navigator.push(
+                      AppNav.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (_) => SetlistDetailScreen(setlistId: setlist.id),
-                        ),
+                        SetlistDetailScreen(setlistId: setlist.id),
                       );
                     },
                   ),

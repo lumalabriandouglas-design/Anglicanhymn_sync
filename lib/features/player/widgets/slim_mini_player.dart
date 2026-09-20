@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../providers/audio_provider.dart';
 import 'player_deck.dart';
 
@@ -21,12 +22,10 @@ class SlimMiniPlayer extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.push(
+        AppNav.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => const PlayerDeck(),
-            fullscreenDialog: true,
-          ),
+          const PlayerDeck(),
+          fullscreenDialog: true,
         );
       },
       onHorizontalDragEnd: (details) {

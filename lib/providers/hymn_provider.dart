@@ -16,6 +16,7 @@ class HymnProvider extends ChangeNotifier {
   String? _errorMessage;
   bool _audioCatalogueReady = false;
   bool _englishOnly = false;
+  Hymn? _selectedHymn;
 
   HymnProvider(this._storageService);
 
@@ -25,6 +26,7 @@ class HymnProvider extends ChangeNotifier {
   String get searchQuery => _searchQuery;
   bool get audioCatalogueReady => _audioCatalogueReady;
   bool get englishOnly => _englishOnly;
+  Hymn? get selectedHymn => _selectedHymn;
   int get englishCount =>
       _allHymns.where((h) => h.hasEnglishLyrics).length;
 
@@ -123,6 +125,11 @@ class HymnProvider extends ChangeNotifier {
 
   void setEnglishOnly(bool value) {
     _englishOnly = value;
+    notifyListeners();
+  }
+
+  void selectHymn(Hymn? hymn) {
+    _selectedHymn = hymn;
     notifyListeners();
   }
 

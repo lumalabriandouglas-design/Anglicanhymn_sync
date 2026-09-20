@@ -6,6 +6,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
@@ -16,8 +17,13 @@ import '../widgets/lyric_report_dialog.dart';
 
 class HymnDetailScreen extends StatefulWidget {
   final Hymn hymn;
+  final bool embedded;
 
-  const HymnDetailScreen({super.key, required this.hymn});
+  const HymnDetailScreen({
+    super.key,
+    required this.hymn,
+    this.embedded = false,
+  });
 
   @override
   State<HymnDetailScreen> createState() => _HymnDetailScreenState();
@@ -35,6 +41,18 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   }
 
   @override
+  void didUpdateWidget(covariant HymnDetailScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.hymn.number != widget.hymn.number) {
+      _autoScrollTimer?.cancel();
+      _isAutoScrolling = false;
+      if (_scrollController.hasClients) {
+        _scrollController.jumpTo(0);
+      }
+    }
+  }
+
+  @override
   void dispose() {
     WakelockPlus.disable();
     _autoScrollTimer?.cancel();
@@ -42,12 +60,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     super.dispose();
   }
 
-  void _toggleAutoScroll(bool isPro) {
-    if (!isPro) {
-      _showProGatedDialog();
-      return;
-    }
-
+  void _toggleAutoScroll() {
     setState(() {
       _isAutoScrolling = !_isAutoScrolling;
     });
@@ -70,39 +83,6 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     }
   }
 
-  void _showProGatedDialog() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? AppColors.cardNavy : Colors.white,
-        title: Text(
-          'PRO Feature',
-          style: TextStyle(
-            color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
-          ),
-        ),
-        content: Text(
-          'Hands-free Auto-Scroll is exclusive to PRO users. Enable PRO mode in the Settings menu to unlock.',
-          style: TextStyle(
-            color: isDark ? AppColors.textWhite : AppColors.lightTextPrimary,
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(
-              'OK',
-              style: TextStyle(
-                color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
@@ -116,69 +96,93 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
         .replaceAll(' Song Lyrics', '')
         .trim();
 
+    final titleBlock = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.hymn.hasEnglishTitle
+              ? 'Hymn ${widget.hymn.number}  ·  ${widget.hymn.titleEnglish}'
+              : 'Hymn ${widget.hymn.number}',
+          style: TextStyle(
+            fontSize: 13,
+            color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+            fontWeight: FontWeight.w500,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 2),
+        Text(
+          cleanTitle,
+          style: GoogleFonts.lora(
+            fontSize: 17,
+            fontWeight: FontWeight.w700,
+            color: isDark ? AppColors.textWhite : AppColors.lightTextPrimary,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+
+    final actions = [
+      IconButton(
+        icon: Icon(
+          widget.hymn.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+          color: widget.hymn.isFavorite
+              ? Colors.redAccent
+              : (isDark ? AppColors.textWhite : AppColors.primaryNavy),
+        ),
+        onPressed: () => hymnProvider.toggleFavorite(widget.hymn),
+      ),
+      IconButton(
+        icon: Icon(
+          Icons.report_problem_outlined,
+          color: isDark ? AppColors.textWhite : AppColors.primaryNavy,
+        ),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (_) => LyricReportDialog(
+              hymnNumber: widget.hymn.number,
+              hymnTitle: widget.hymn.title,
+            ),
+          );
+        },
+      ),
+    ];
+
     return Scaffold(
       backgroundColor: isDark ? AppColors.primaryNavy : AppColors.lightBackground,
-      appBar: AppBar(
-        backgroundColor: isDark ? AppColors.primaryNavy : Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.hymn.hasEnglishTitle
-                  ? 'Hymn ${widget.hymn.number}  ·  ${widget.hymn.titleEnglish}'
-                  : 'Hymn ${widget.hymn.number}',
-              style: TextStyle(
-                fontSize: 13,
-                color: isDark ? Colors.grey.shade400 : Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+      appBar: widget.embedded
+          ? null
+          : AppBar(
+              backgroundColor: isDark ? AppColors.primaryNavy : Colors.white,
+              elevation: 0,
+              centerTitle: false,
+              title: titleBlock,
+              actions: actions,
             ),
-            const SizedBox(height: 2),
-            Text(
-              cleanTitle,
-              style: GoogleFonts.lora(
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-                color: isDark ? AppColors.textWhite : AppColors.lightTextPrimary,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              widget.hymn.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
-              color: widget.hymn.isFavorite
-                  ? Colors.redAccent
-                  : (isDark ? AppColors.textWhite : AppColors.primaryNavy),
-            ),
-            onPressed: () => hymnProvider.toggleFavorite(widget.hymn),
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.report_problem_outlined,
-              color: isDark ? AppColors.textWhite : AppColors.primaryNavy,
-            ),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => LyricReportDialog(
-                  hymnNumber: widget.hymn.number,
-                  hymnTitle: widget.hymn.title,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
       body: Column(
         children: [
+          if (widget.embedded)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 4, 4),
+              child: Row(
+                children: [
+                  Expanded(child: titleBlock),
+                  ...actions,
+                  IconButton(
+                    tooltip: 'Close reader',
+                    icon: Icon(
+                      Icons.close_rounded,
+                      color: isDark ? AppColors.textWhite : AppColors.primaryNavy,
+                    ),
+                    onPressed: () => hymnProvider.selectHymn(null),
+                  ),
+                ],
+              ),
+            ),
           Container(
             height: 1,
             color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.withOpacity(0.15),
@@ -216,13 +220,16 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
+                      tooltip: _isAutoScrolling
+                          ? 'Stop auto-scroll'
+                          : 'Auto-scroll lyrics',
                       icon: Icon(
                         _isAutoScrolling
                             ? Icons.pause_rounded
                             : Icons.unfold_more_rounded,
                         color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
                       ),
-                      onPressed: () => _toggleAutoScroll(settings.isProUser),
+                      onPressed: _toggleAutoScroll,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -261,12 +268,10 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                                 widget.hymn,
                                 language: settings.lyricsLanguage,
                               );
-                              Navigator.push(
+                              AppNav.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (_) => const PlayerDeck(),
-                                  fullscreenDialog: true,
-                                ),
+                                const PlayerDeck(),
+                                fullscreenDialog: true,
                               );
                             }
                           : null,

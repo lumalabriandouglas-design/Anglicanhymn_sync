@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/hymn_audio.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/search_engine.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
@@ -33,12 +34,10 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   void _openFullPlayer(BuildContext context) {
-    Navigator.push(
+    AppNav.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const PlayerDeck(),
-        fullscreenDialog: true,
-      ),
+      const PlayerDeck(),
+      fullscreenDialog: true,
     );
   }
 
@@ -63,42 +62,43 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final text = isDark ? Colors.white : AppColors.lightTextPrimary;
     final muted = isDark ? Colors.white.withOpacity(0.45) : AppColors.lightTextSecondary;
 
-    return Scaffold(
-      backgroundColor: bg,
-      appBar: AppBar(
-        backgroundColor: bg,
-        title: const Text('Audio Library'),
-        elevation: 0,
-        actions: [
-          if (audio.currentHymn != null)
-            IconButton(
-              icon: Icon(Icons.queue_music_rounded,
-                  color: isDark ? AppColors.celestialGold : AppColors.primaryNavy),
-              onPressed: () => _openFullPlayer(context),
-              tooltip: 'Open now playing',
-            ),
-        ],
-      ),
-      body: Column(
-        children: [
+    return ColoredBox(
+      color: bg,
+      child: Column(
+      children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-            child: TextField(
-              controller: _searchController,
-              onChanged: (val) => setState(() => _query = val),
-              style: TextStyle(color: text),
-              decoration: InputDecoration(
-                hintText: 'Search number, Luganda or English title...',
-                hintStyle: TextStyle(color: muted),
-                prefixIcon: const Icon(Icons.search, color: AppColors.celestialGold),
-                filled: true,
-                fillColor: card,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(14),
-                  borderSide: BorderSide.none,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    onChanged: (val) => setState(() => _query = val),
+                    style: TextStyle(color: text),
+                    decoration: InputDecoration(
+                      hintText: 'Search number, Luganda or English title...',
+                      hintStyle: TextStyle(color: muted),
+                      prefixIcon: const Icon(Icons.search, color: AppColors.celestialGold),
+                      filled: true,
+                      fillColor: card,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: BorderSide.none,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    ),
+                  ),
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-              ),
+                if (audio.currentHymn != null) ...[
+                  const SizedBox(width: 8),
+                  IconButton(
+                    icon: Icon(Icons.queue_music_rounded,
+                        color: isDark ? AppColors.celestialGold : AppColors.primaryNavy),
+                    onPressed: () => _openFullPlayer(context),
+                    tooltip: 'Open now playing',
+                  ),
+                ],
+              ],
             ),
           ),
           Expanded(

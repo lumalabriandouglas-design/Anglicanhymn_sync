@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
 import '../../../models/service_setlist.dart';
 import '../../../providers/audio_provider.dart';
@@ -167,11 +168,9 @@ class SetlistDetailScreen extends StatelessWidget {
                     onTap: hymn == null
                         ? null
                         : () {
-                            Navigator.push(
+                            AppNav.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (_) => HymnDetailScreen(hymn: hymn),
-                              ),
+                              HymnDetailScreen(hymn: hymn),
                             );
                           },
                   ),

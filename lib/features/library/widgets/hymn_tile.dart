@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
+import '../../../core/widgets/app_nav.dart';
+import '../../../core/widgets/breakpoints.dart';
 import '../../../models/hymn.dart';
+import '../../../providers/hymn_provider.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
 
 class HymnTile extends StatelessWidget {
@@ -17,6 +21,14 @@ class HymnTile extends StatelessWidget {
     this.onPlayTap,
   });
 
+  void _openHymn(BuildContext context) {
+    if (Breakpoints.useRail(context)) {
+      context.read<HymnProvider>().selectHymn(hymn);
+      return;
+    }
+    AppNav.push(context, HymnDetailScreen(hymn: hymn));
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -27,6 +39,8 @@ class HymnTile extends StatelessWidget {
         ? AppColors.celestialGold.withOpacity(0.15)
         : AppColors.celestialGold.withOpacity(0.12);
     final numberColor = isDark ? AppColors.celestialGold : AppColors.primaryNavy;
+    final selected = context.watch<HymnProvider>().selectedHymn?.number == hymn.number &&
+        Breakpoints.useRail(context);
 
     final lyricPreview = hymn.lyricsLuganda
         .split('\n')
@@ -41,6 +55,9 @@ class HymnTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: cardColor,
         borderRadius: BorderRadius.circular(14),
+        border: selected
+            ? Border.all(color: AppColors.celestialGold.withOpacity(0.7), width: 1.2)
+            : null,
         boxShadow: isDark
             ? []
             : [
@@ -56,15 +73,7 @@ class HymnTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(14),
         child: InkWell(
           borderRadius: BorderRadius.circular(14),
-          onTap: onTap ??
-              () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => HymnDetailScreen(hymn: hymn),
-                  ),
-                );
-              },
+          onTap: onTap ?? () => _openHymn(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             child: Row(

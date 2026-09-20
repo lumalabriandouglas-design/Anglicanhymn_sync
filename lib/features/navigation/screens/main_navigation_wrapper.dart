@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/constants/app_colors.dart';
+import '../../../core/widgets/app_nav.dart';
 import '../../../core/widgets/breakpoints.dart';
 import '../../../core/widgets/responsive_center.dart';
 import '../../../providers/audio_provider.dart';
+import '../../../providers/hymn_provider.dart';
 import '../../favorites/screens/favorites_screen.dart';
 import '../../library/screens/library_screen.dart';
 import '../../player/screens/player_screen.dart';
 import '../../player/widgets/slim_mini_player.dart';
+import '../../reader/screens/hymn_detail_screen.dart';
 import '../widgets/more_bottom_sheet.dart';
 
 class MainNavigationWrapper extends StatefulWidget {
@@ -28,10 +30,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   ];
 
   void _openSettings() {
-    showModalBottomSheet(
+    AppNav.showSheet(
       context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (_) => const MoreBottomSheet(),
     );
   }
@@ -39,16 +39,69 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioProvider>();
+    final selected = context.watch<HymnProvider>().selectedHymn;
     final hasPlayer = audio.currentHymn != null;
     final wide = Breakpoints.useRail(context);
     final padding = MediaQuery.paddingOf(context);
+    final showReader = wide && _currentIndex == 0 && selected != null;
 
-    final body = ResponsiveCenter(
+    final tabBody = ResponsiveCenter(
       child: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
     );
+
+    Widget navigationBody;
+    if (wide) {
+      navigationBody = Row(
+        children: [
+          NavigationRail(
+            selectedIndex: _currentIndex,
+            onDestinationSelected: (index) =>
+                setState(() => _currentIndex = index),
+            labelType: NavigationRailLabelType.all,
+            destinations: const [
+              NavigationRailDestination(
+                icon: Icon(Icons.menu_book_outlined),
+                selectedIcon: Icon(Icons.menu_book_rounded),
+                label: Text('Library'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.headphones_outlined),
+                selectedIcon: Icon(Icons.headphones_rounded),
+                label: Text('Player'),
+              ),
+              NavigationRailDestination(
+                icon: Icon(Icons.favorite_outline_rounded),
+                selectedIcon: Icon(Icons.favorite_rounded),
+                label: Text('Favorites'),
+              ),
+            ],
+          ),
+          const VerticalDivider(width: 1),
+          Expanded(flex: showReader ? 5 : 1, child: tabBody),
+          if (showReader) ...[
+            const VerticalDivider(width: 1),
+            Expanded(
+              flex: 6,
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 260),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: HymnDetailScreen(
+                  key: ValueKey(selected.number),
+                  hymn: selected,
+                  embedded: true,
+                ),
+              ),
+            ),
+          ],
+        ],
+      );
+    } else {
+      navigationBody = tabBody;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -61,37 +114,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
           ),
         ],
       ),
-      body: wide
-          ? Row(
-              children: [
-                NavigationRail(
-                  selectedIndex: _currentIndex,
-                  onDestinationSelected: (index) =>
-                      setState(() => _currentIndex = index),
-                  labelType: NavigationRailLabelType.all,
-                  destinations: const [
-                    NavigationRailDestination(
-                      icon: Icon(Icons.menu_book_outlined),
-                      selectedIcon: Icon(Icons.menu_book_rounded),
-                      label: Text('Library'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.headphones_outlined),
-                      selectedIcon: Icon(Icons.headphones_rounded),
-                      label: Text('Player'),
-                    ),
-                    NavigationRailDestination(
-                      icon: Icon(Icons.favorite_outline_rounded),
-                      selectedIcon: Icon(Icons.favorite_rounded),
-                      label: Text('Favorites'),
-                    ),
-                  ],
-                ),
-                const VerticalDivider(width: 1),
-                Expanded(child: body),
-              ],
-            )
-          : body,
+      body: navigationBody,
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [

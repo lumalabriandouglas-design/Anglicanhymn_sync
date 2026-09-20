@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
 import '../../../core/utils/verse_parser.dart';
+import '../../../core/widgets/app_nav.dart';
+import '../../../core/widgets/responsive_center.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
 import '../../../providers/settings_provider.dart';
@@ -57,61 +59,99 @@ class _PlayerDeckState extends State<PlayerDeck> {
 
   void _openQueue(BuildContext context, AudioProvider audio) {
     final items = audio.playableHymns;
-    showModalBottomSheet<void>(
+    AppNav.showSheet<void>(
       context: context,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? AppColors.cardNavy
-          : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (ctx) {
-        return SafeArea(
-          child: SizedBox(
-            height: MediaQuery.of(ctx).size.height * 0.55,
-            child: Column(
-              children: [
-                ListTile(
-                  title: Text(
-                    'Queue',
-                    style: GoogleFonts.cinzel(fontWeight: FontWeight.w600),
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return Material(
+          color: isDark ? AppColors.cardNavy : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          clipBehavior: Clip.antiAlias,
+          child: SafeArea(
+            child: SizedBox(
+              height: MediaQuery.of(ctx).size.height * 0.55,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Queue',
+                      style: GoogleFonts.cinzel(fontWeight: FontWeight.w600),
+                    ),
+                    trailing: TextButton(
+                      onPressed: () {
+                        Navigator.pop(ctx);
+                        audio.stop();
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Stop'),
+                    ),
                   ),
-                  trailing: TextButton(
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      audio.stop();
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Stop'),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (_, i) {
-                      final hymn = items[i];
-                      final current =
-                          audio.currentHymn?.number == hymn.number;
-                      return ListTile(
-                        leading: Text(
-                          hymn.number,
-                          style: GoogleFonts.cinzel(
-                            color: AppColors.celestialGold,
-                            fontWeight: FontWeight.w700,
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (_, i) {
+                        final hymn = items[i];
+                        final current =
+                            audio.currentHymn?.number == hymn.number;
+                        return ListTile(
+                          leading: Text(
+                            hymn.number,
+                            style: GoogleFonts.cinzel(
+                              color: AppColors.celestialGold,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
-                        ),
-                        title: Text(hymn.title, maxLines: 1),
-                        subtitle: hymn.hasEnglishTitle
-                            ? Text(hymn.titleEnglish, maxLines: 1)
-                            : null,
-                        selected: current,
-                        onTap: () {
-                          audio.playHymn(hymn, language: audio.audioLanguage);
-                          Navigator.pop(ctx);
-                        },
-                      );
+                          title: Text(hymn.title, maxLines: 1),
+                          subtitle: hymn.hasEnglishTitle
+                              ? Text(hymn.titleEnglish, maxLines: 1)
+                              : null,
+                          selected: current,
+                          onTap: () {
+                            audio.playHymn(hymn, language: audio.audioLanguage);
+                            Navigator.pop(ctx);
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _pickSleep(BuildContext context, AudioProvider audio) {
+    AppNav.showSheet<void>(
+      context: context,
+      isScrollControlled: false,
+      builder: (ctx) {
+        final isDark = Theme.of(ctx).brightness == Brightness.dark;
+        return Material(
+          color: isDark ? AppColors.cardNavy : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          clipBehavior: Clip.antiAlias,
+          child: SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const ListTile(title: Text('Sleep timer')),
+                for (final minutes in [15, 30, 45, 60])
+                  ListTile(
+                    title: Text('$minutes minutes'),
+                    onTap: () {
+                      audio.setSleepTimer(minutes);
+                      Navigator.pop(ctx);
                     },
                   ),
+                ListTile(
+                  title: const Text('Off'),
+                  onTap: () {
+                    audio.setSleepTimer(null);
+                    Navigator.pop(ctx);
+                  },
                 ),
               ],
             ),
@@ -121,44 +161,9 @@ class _PlayerDeckState extends State<PlayerDeck> {
     );
   }
 
-  void _pickSleep(BuildContext context, AudioProvider audio) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Theme.of(context).brightness == Brightness.dark
-          ? AppColors.cardNavy
-          : Colors.white,
-      builder: (ctx) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const ListTile(title: Text('Sleep timer')),
-              for (final minutes in [15, 30, 45, 60])
-                ListTile(
-                  title: Text('$minutes minutes'),
-                  onTap: () {
-                    audio.setSleepTimer(minutes);
-                    Navigator.pop(ctx);
-                  },
-                ),
-              ListTile(
-                title: const Text('Off'),
-                onTap: () {
-                  audio.setSleepTimer(null);
-                  Navigator.pop(ctx);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioProvider>();
-    final settings = context.watch<SettingsProvider>();
     final hymn = audio.currentHymn;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? AppColors.primaryNavy : AppColors.lightBackground;
@@ -199,7 +204,9 @@ class _PlayerDeckState extends State<PlayerDeck> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        child: Column(
+        child: ResponsiveCenter(
+          maxContentWidth: 720,
+          child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 4, right: 8, top: 4),
@@ -444,14 +451,6 @@ class _PlayerDeckState extends State<PlayerDeck> {
                     ],
                     onChanged: (val) {
                       if (val == null) return;
-                      if (!settings.isProUser && val != 1.0) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Custom speeds are for PRO users'),
-                          ),
-                        );
-                        return;
-                      }
                       audio.setPlaybackSpeed(val);
                     },
                   ),
@@ -504,6 +503,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
               ),
             ),
           ],
+        ),
         ),
       ),
     );

@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../constants/app_colors.dart';
+import '../widgets/app_nav.dart';
 
 class AppTheme {
+  static const pageTransitionsTheme = PageTransitionsTheme(
+    builders: {
+      TargetPlatform.android: AppFadeSlideTransitionsBuilder(),
+      TargetPlatform.iOS: AppFadeSlideTransitionsBuilder(),
+      TargetPlatform.macOS: AppFadeSlideTransitionsBuilder(),
+      TargetPlatform.windows: AppFadeSlideTransitionsBuilder(),
+      TargetPlatform.linux: AppFadeSlideTransitionsBuilder(),
+      TargetPlatform.fuchsia: AppFadeSlideTransitionsBuilder(),
+    },
+  );
+
   // ---------- LIGHT THEME (DEFAULT) ----------
   static ThemeData get lightTheme {
     return ThemeData(
@@ -10,6 +22,7 @@ class AppTheme {
       brightness: Brightness.light,
       scaffoldBackgroundColor: AppColors.lightBackground,
       primaryColor: AppColors.primaryNavy,
+      pageTransitionsTheme: pageTransitionsTheme,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryNavy,
         secondary: AppColors.celestialGold,
@@ -61,6 +74,7 @@ class AppTheme {
       brightness: Brightness.dark,
       scaffoldBackgroundColor: AppColors.primaryNavy,
       primaryColor: AppColors.celestialGold,
+      pageTransitionsTheme: pageTransitionsTheme,
       colorScheme: const ColorScheme.dark(
         primary: AppColors.celestialGold,
         secondary: AppColors.celestialGold,
