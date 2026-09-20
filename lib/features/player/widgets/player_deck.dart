@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
+import '../../../core/constants/pro_features.dart';
 import '../../../core/utils/verse_parser.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../core/widgets/responsive_center.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
+import '../../../providers/billing_provider.dart';
 import '../../../providers/settings_provider.dart';
 
 class PlayerDeck extends StatefulWidget {
@@ -164,6 +166,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
   @override
   Widget build(BuildContext context) {
     final audio = context.watch<AudioProvider>();
+    final billing = context.watch<BillingProvider>();
     final hymn = audio.currentHymn;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? AppColors.primaryNavy : AppColors.lightBackground;
@@ -429,7 +432,8 @@ class _PlayerDeckState extends State<PlayerDeck> {
                       activeColor: AppColors.celestialGold,
                     ),
                   ),
-                  IconButton(
+                  if (billing.canUse(ListeningFeature.sleepTimer))
+                    IconButton(
                     tooltip: 'Sleep timer',
                     icon: Icon(
                       Icons.bedtime_outlined,
@@ -440,7 +444,8 @@ class _PlayerDeckState extends State<PlayerDeck> {
                     ),
                     onPressed: () => _pickSleep(context, audio),
                   ),
-                  DropdownButton<double>(
+                  if (billing.canUse(ListeningFeature.playbackSpeed))
+                    DropdownButton<double>(
                     value: audio.currentSpeed,
                     underline: const SizedBox.shrink(),
                     items: const [

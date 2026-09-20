@@ -17,6 +17,7 @@ dependencies:
   wakelock_plus: ^1.1.4
   mobile_scanner: ^6.0.0
   http: ^1.2.2
+  url_launcher: ^6.3.1
 
 dev_dependencies:
   flutter_test:
@@ -40,4 +41,5 @@ flutter:
     - assets/hymns-full.json
     - assets/audio-catalogue.json
     - assets/english-overlay.json
+    - assets/billing.json
     - assets/images/app_icon.png

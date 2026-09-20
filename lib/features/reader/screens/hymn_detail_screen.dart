@@ -6,9 +6,11 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/hymn_audio.dart';
+import '../../../core/constants/pro_features.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
 import '../../../providers/audio_provider.dart';
+import '../../../providers/billing_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
 import '../../player/widgets/player_deck.dart';
@@ -88,8 +90,10 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final settings = context.watch<SettingsProvider>();
     final hymnProvider = context.watch<HymnProvider>();
     final audioProvider = context.watch<AudioProvider>();
+    final billing = context.watch<BillingProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final hasAudio = HymnAudio.hasAudio(widget.hymn);
+    final canAutoScroll = billing.canUse(ListeningFeature.autoScroll);
 
     final cleanTitle = widget.hymn.title
         .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')
@@ -212,7 +216,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               top: false,
               child: Row(
                 children: [
-                  Container(
+                  if (canAutoScroll) ...[
+                    Container(
                     decoration: BoxDecoration(
                       color: isDark
                           ? AppColors.celestialGold.withOpacity(0.15)
@@ -233,6 +238,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                     ),
                   ),
                   const SizedBox(width: 12),
+                  ],
                   Expanded(
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(

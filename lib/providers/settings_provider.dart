@@ -26,7 +26,7 @@ class SettingsProvider extends ChangeNotifier {
   LyricsLanguage get lyricsLanguage => _lyricsLanguage;
   double get fontSize => _fontSize;
 
-  /// Pro stays open for every visitor until billing ships.
+  /// Public listeners keep every tool while the book is free.
   bool get isProUser => ProFeatures.unlockedForEveryone;
 
   bool get isDarkMode => _themeMode == AppThemeMode.dark;

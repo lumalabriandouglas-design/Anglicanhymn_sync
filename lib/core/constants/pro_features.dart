@@ -1,15 +1,32 @@
+enum ListeningFeature {
+  playAudio,
+  shuffleRepeat,
+  playbackSpeed,
+  sleepTimer,
+  autoScroll,
+}
+
 class ProFeatures {
-  /// Billing is not live. Every visitor gets the full toolkit for now.
+  /// The public hymn book stays fully open. Flip this only when billing goes live.
   static const bool unlockedForEveryone = true;
 
-  static const String previewLabel = 'Open to everyone';
+  /// Never mention plans, Plus, or payment in the public UI while this is true.
+  static const bool hideSubscriptionUi = true;
 
-  static const String blurb =
-      'Pro tools stay unlocked on the app and the website while we finish billing.';
+  static const String defaultPin = '1977';
 
-  static const List<String> items = [
-    'Hands-free auto-scroll in the reader',
-    'Playback speed from 0.75x to 1.5x',
-    'Sleep timer while audio plays',
-  ];
+  static const String codeSecret = 'ahs-plus-1977';
+
+  static bool canUse(ListeningFeature feature, {required bool plusActive}) {
+    if (unlockedForEveryone || plusActive) return true;
+    switch (feature) {
+      case ListeningFeature.playAudio:
+      case ListeningFeature.shuffleRepeat:
+        return true;
+      case ListeningFeature.playbackSpeed:
+      case ListeningFeature.sleepTimer:
+      case ListeningFeature.autoScroll:
+        return false;
+    }
+  }
 }

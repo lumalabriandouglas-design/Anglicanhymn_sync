@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/pro_features.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../core/widgets/breakpoints.dart';
 import '../../../providers/settings_provider.dart';
@@ -179,80 +178,6 @@ class MoreBottomSheet extends StatelessWidget {
             ),
 
             const SizedBox(height: 22),
-            Divider(color: isDark ? Colors.white12 : Colors.grey.shade200),
-            const SizedBox(height: 12),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-              decoration: BoxDecoration(
-                color: AppColors.celestialGold.withOpacity(isDark ? 0.12 : 0.14),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: AppColors.celestialGold.withOpacity(0.45),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.workspace_premium_rounded, color: primaryColor),
-                      const SizedBox(width: 8),
-                      Text(
-                        'PRO',
-                        style: TextStyle(
-                          color: textColor,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.6,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.celestialGold,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Text(
-                          ProFeatures.previewLabel,
-                          style: TextStyle(
-                            color: AppColors.primaryNavy,
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    ProFeatures.blurb,
-                    style: TextStyle(fontSize: 12.5, height: 1.35, color: secondaryText),
-                  ),
-                  const SizedBox(height: 10),
-                  for (final item in ProFeatures.items)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 6),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.check_rounded, size: 16, color: AppColors.celestialGold),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              item,
-                              style: TextStyle(color: textColor, fontSize: 13, height: 1.3),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 18),
             Divider(color: isDark ? Colors.white12 : Colors.grey.shade200),
             const SizedBox(height: 12),
 
