@@ -3,6 +3,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/verse_parser.dart';
 import '../../../core/widgets/responsive_center.dart';
 import '../../../providers/settings_provider.dart';
+import 'font_size_control.dart';
 
 class DualLyricsView extends StatefulWidget {
   final String lyricsLuganda;
@@ -71,24 +72,35 @@ class _DualLyricsViewState extends State<DualLyricsView> {
         children: [
           const SizedBox(height: 10),
 
-          // Language pills
-          if (hasEnglish)
-            Container(
-              width: 270,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
-              ),
-              child: Row(
-                children: [
-                  _buildPill('Luganda', 0),
-                  _buildPill('English', 1),
-                  _buildPill('Both', 2),
-                ],
-              ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                if (hasEnglish) ...[
+                  Expanded(
+                    child: Container(
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildPill('Luganda', 0),
+                          _buildPill('English', 1),
+                          _buildPill('Both', 2),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                ] else
+                  const Spacer(),
+                const FontSizeControl(),
+              ],
             ),
+          ),
 
           const SizedBox(height: 14),
 
