@@ -123,7 +123,7 @@ class SetlistDetailScreen extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: AppColors.celestialGold.withOpacity(0.18),
+                      backgroundColor: AppColors.celestialGold.withValues(alpha: 0.18),
                       child: Text(
                         item.hymnNumber,
                         style: const TextStyle(

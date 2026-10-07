@@ -83,7 +83,7 @@ class _DualLyricsViewState extends State<DualLyricsView> {
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
                       ),
                       child: Row(
                         children: [
@@ -180,7 +180,7 @@ class _DualLyricsViewState extends State<DualLyricsView> {
           child: Container(
             decoration: BoxDecoration(
               border: Border(
-                right: BorderSide(color: Colors.grey.withOpacity(0.25), width: 1),
+                right: BorderSide(color: Colors.grey.withValues(alpha: 0.25), width: 1),
               ),
             ),
             child: SingleChildScrollView(

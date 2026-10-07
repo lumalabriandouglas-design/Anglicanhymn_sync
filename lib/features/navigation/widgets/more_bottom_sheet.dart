@@ -40,7 +40,7 @@ class MoreBottomSheet extends StatelessWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.35),
+                    color: Colors.grey.withValues(alpha: 0.35),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -96,7 +96,7 @@ class MoreBottomSheet extends StatelessWidget {
                   if (states.contains(WidgetState.selected)) {
                     return primaryColor;
                   }
-                  return isDark ? Colors.white.withOpacity(0.08) : Colors.grey.shade100;
+                  return isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100;
                 }),
                 foregroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
@@ -148,7 +148,7 @@ class MoreBottomSheet extends StatelessWidget {
                   if (states.contains(WidgetState.selected)) {
                     return primaryColor;
                   }
-                  return isDark ? Colors.white.withOpacity(0.08) : Colors.grey.shade100;
+                  return isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.shade100;
                 }),
                 foregroundColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {

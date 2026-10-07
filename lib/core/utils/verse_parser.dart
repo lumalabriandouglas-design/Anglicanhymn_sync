@@ -24,8 +24,8 @@ class VerseParser {
         final textColor =
             isDark ? AppColors.textWhite : AppColors.lightTextPrimary;
         final chorusBg = isDark
-            ? AppColors.surfaceLight.withOpacity(0.4)
-            : AppColors.celestialGold.withOpacity(0.13);
+            ? AppColors.surfaceLight.withValues(alpha: 0.4)
+            : AppColors.celestialGold.withValues(alpha: 0.13);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,

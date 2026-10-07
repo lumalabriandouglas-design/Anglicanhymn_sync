@@ -26,7 +26,7 @@ class FontSizeControl extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+        border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -44,7 +44,7 @@ class FontSizeControl extends StatelessWidget {
           Container(
             width: 1,
             height: 18,
-            color: Colors.grey.withOpacity(0.25),
+            color: Colors.grey.withValues(alpha: 0.25),
           ),
           _AaButton(
             label: 'A',
@@ -94,7 +94,7 @@ class _AaButton extends StatelessWidget {
               fontSize: fontSize,
               fontWeight: FontWeight.w700,
               height: 1,
-              color: enabled ? color : color.withOpacity(0.28),
+              color: enabled ? color : color.withValues(alpha: 0.28),
             ),
           ),
         ),

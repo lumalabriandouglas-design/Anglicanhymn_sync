@@ -36,8 +36,8 @@ class HymnTile extends StatelessWidget {
     final subtitleColor = isDark ? Colors.grey.shade400 : AppColors.lightTextSecondary;
     final cardColor = isDark ? AppColors.cardNavy : Colors.white;
     final numberBg = isDark
-        ? AppColors.celestialGold.withOpacity(0.15)
-        : AppColors.celestialGold.withOpacity(0.12);
+        ? AppColors.celestialGold.withValues(alpha: 0.15)
+        : AppColors.celestialGold.withValues(alpha: 0.12);
     final numberColor = isDark ? AppColors.celestialGold : AppColors.primaryNavy;
     final selected = context.watch<HymnProvider>().selectedHymn?.number == hymn.number &&
         Breakpoints.useRail(context);
@@ -56,13 +56,13 @@ class HymnTile extends StatelessWidget {
         color: cardColor,
         borderRadius: BorderRadius.circular(14),
         border: selected
-            ? Border.all(color: AppColors.celestialGold.withOpacity(0.7), width: 1.2)
+            ? Border.all(color: AppColors.celestialGold.withValues(alpha: 0.7), width: 1.2)
             : null,
         boxShadow: isDark
             ? []
             : [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.04),
+                  color: Colors.black.withValues(alpha: 0.04),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -129,7 +129,7 @@ class HymnTile extends StatelessWidget {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: AppColors.celestialGold.withOpacity(0.7),
+                                  color: AppColors.celestialGold.withValues(alpha: 0.7),
                                 ),
                               ),
                               child: const Text(
