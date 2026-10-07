@@ -1,4 +1,4 @@
-package com.example.nsync_songbook
+package com.lumala.anglicanhymnsync
 
 import io.flutter.embedding.android.FlutterActivity
 

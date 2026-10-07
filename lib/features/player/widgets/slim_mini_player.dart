@@ -44,12 +44,12 @@ class SlimMiniPlayer extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.06)
+                ? Colors.white.withValues(alpha: 0.06)
                 : AppColors.lightDivider,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(isDark ? 0.4 : 0.08),
+              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.08),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),
@@ -81,7 +81,7 @@ class SlimMiniPlayer extends StatelessWidget {
                         color: AppColors.primaryNavy,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
-                          color: AppColors.celestialGold.withOpacity(0.45),
+                          color: AppColors.celestialGold.withValues(alpha: 0.45),
                         ),
                       ),
                       child: audio.isLoading
@@ -144,7 +144,7 @@ class SlimMiniPlayer extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.skip_previous_rounded, size: 26),
-                      color: titleColor.withOpacity(0.7),
+                      color: titleColor.withValues(alpha: 0.7),
                       onPressed: audio.playPrevious,
                       visualDensity: VisualDensity.compact,
                     ),
@@ -169,7 +169,7 @@ class SlimMiniPlayer extends StatelessWidget {
                     ),
                     IconButton(
                       icon: const Icon(Icons.skip_next_rounded, size: 26),
-                      color: titleColor.withOpacity(0.7),
+                      color: titleColor.withValues(alpha: 0.7),
                       onPressed: audio.playNext,
                       visualDensity: VisualDensity.compact,
                     ),

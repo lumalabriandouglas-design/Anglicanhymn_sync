@@ -52,3 +52,9 @@ build/
 node_modules/
 build/
 .dart_tool/
+
+# Release signing (never commit)
+android/key.properties
+key.properties
+*.jks
+*.keystore

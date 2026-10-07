@@ -189,7 +189,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
             ),
           Container(
             height: 1,
-            color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.withOpacity(0.15),
+            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.withValues(alpha: 0.15),
           ),
           Expanded(
             child: DualLyricsView(
@@ -206,7 +206,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               color: isDark ? AppColors.cardNavy : Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                   blurRadius: 10,
                   offset: const Offset(0, -2),
                 ),
@@ -220,8 +220,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                     Container(
                     decoration: BoxDecoration(
                       color: isDark
-                          ? AppColors.celestialGold.withOpacity(0.15)
-                          : AppColors.celestialGold.withOpacity(0.12),
+                          ? AppColors.celestialGold.withValues(alpha: 0.15)
+                          : AppColors.celestialGold.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
