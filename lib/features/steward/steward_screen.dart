@@ -433,6 +433,7 @@ class _ActivateTabState extends State<_ActivateTab> {
                           final code = await billing.markPaid(claim);
                           if (!context.mounted) return;
                           await Clipboard.setData(ClipboardData(text: code));
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(content: Text('Activated. Code $code copied')),
                           );
@@ -569,7 +570,7 @@ class _PlanCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.cardNavy : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: plus ? Border.all(color: AppColors.celestialGold.withOpacity(0.5)) : null,
+        border: plus ? Border.all(color: AppColors.celestialGold.withValues(alpha: 0.5)) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

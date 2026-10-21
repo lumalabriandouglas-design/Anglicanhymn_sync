@@ -8,5 +8,12 @@
     "deploymentEnabled": {
       "gh-pages": false
     }
-  }
+  },
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/privacy",
+      "destination": "/privacy.html"
+    }
+  ]
 }

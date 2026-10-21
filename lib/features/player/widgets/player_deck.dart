@@ -197,9 +197,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
       });
     }
 
-    final sleepLeft = audio.sleepUntil == null
-        ? null
-        : audio.sleepUntil!.difference(_now);
+    final sleepLeft = audio.sleepUntil?.difference(_now);
     final sleepLabel = sleepLeft == null || sleepLeft.isNegative
         ? null
         : _formatDuration(sleepLeft);
@@ -318,9 +316,9 @@ class _PlayerDeckState extends State<PlayerDeck> {
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: AppColors.celestialGold,
-                      inactiveTrackColor: titleColor.withOpacity(0.12),
+                      inactiveTrackColor: titleColor.withValues(alpha: 0.12),
                       thumbColor: AppColors.celestialGold,
-                      overlayColor: AppColors.celestialGold.withOpacity(0.15),
+                      overlayColor: AppColors.celestialGold.withValues(alpha: 0.15),
                       trackHeight: 3,
                       thumbShape:
                           const RoundSliderThumbShape(enabledThumbRadius: 6.5),
@@ -364,14 +362,14 @@ class _PlayerDeckState extends State<PlayerDeck> {
                     Icons.shuffle_rounded,
                     color: audio.shuffle
                         ? AppColors.celestialGold
-                        : titleColor.withOpacity(0.45),
+                        : titleColor.withValues(alpha: 0.45),
                   ),
                   onPressed: audio.toggleShuffle,
                 ),
                 IconButton(
                   iconSize: 34,
                   icon: Icon(Icons.skip_previous_rounded,
-                      color: titleColor.withOpacity(0.75)),
+                      color: titleColor.withValues(alpha: 0.75)),
                   onPressed: audio.playPrevious,
                 ),
                 const SizedBox(width: 8),
@@ -383,7 +381,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
                     color: AppColors.celestialGold,
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.celestialGold.withOpacity(0.35),
+                        color: AppColors.celestialGold.withValues(alpha: 0.35),
                         blurRadius: 18,
                       ),
                     ],
@@ -403,7 +401,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
                 IconButton(
                   iconSize: 34,
                   icon: Icon(Icons.skip_next_rounded,
-                      color: titleColor.withOpacity(0.75)),
+                      color: titleColor.withValues(alpha: 0.75)),
                   onPressed: audio.playNext,
                 ),
                 IconButton(
@@ -413,7 +411,7 @@ class _PlayerDeckState extends State<PlayerDeck> {
                         ? Icons.repeat_one_rounded
                         : Icons.repeat_rounded,
                     color: audio.repeat == RepeatMode.off
-                        ? titleColor.withOpacity(0.45)
+                        ? titleColor.withValues(alpha: 0.45)
                         : AppColors.celestialGold,
                   ),
                   onPressed: audio.cycleRepeat,
@@ -543,7 +541,7 @@ class _QueueStrip extends StatelessWidget {
             label: Text(hymn.number),
             backgroundColor: active
                 ? AppColors.celestialGold
-                : AppColors.celestialGold.withOpacity(0.12),
+                : AppColors.celestialGold.withValues(alpha: 0.12),
             labelStyle: TextStyle(
               color: active ? AppColors.primaryNavy : AppColors.celestialGold,
               fontWeight: FontWeight.w700,
@@ -589,7 +587,7 @@ class HymnNumberArt extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.celestialGold.withOpacity(0.22),
+              color: AppColors.celestialGold.withValues(alpha: 0.22),
               blurRadius: 28,
             ),
           ],
@@ -604,7 +602,7 @@ class HymnNumberArt extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.celestialGold.withOpacity(0.28),
+                      color: AppColors.celestialGold.withValues(alpha: 0.28),
                     ),
                   ),
                 ),
@@ -617,7 +615,7 @@ class HymnNumberArt extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: AppColors.celestialGold.withOpacity(0.62),
+                      color: AppColors.celestialGold.withValues(alpha: 0.62),
                     ),
                   ),
                 ),
@@ -654,7 +652,7 @@ class HymnNumberArt extends StatelessWidget {
             if (loading)
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.primaryNavy.withOpacity(0.4),
+                  color: AppColors.primaryNavy.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: const Center(

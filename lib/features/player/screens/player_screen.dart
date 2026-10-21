@@ -60,7 +60,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
     final bg = isDark ? AppColors.primaryNavy : AppColors.lightBackground;
     final card = isDark ? AppColors.cardNavy : Colors.white;
     final text = isDark ? Colors.white : AppColors.lightTextPrimary;
-    final muted = isDark ? Colors.white.withOpacity(0.45) : AppColors.lightTextSecondary;
+    final muted = isDark ? Colors.white.withValues(alpha: 0.45) : AppColors.lightTextSecondary;
 
     return ColoredBox(
       color: bg,
@@ -118,7 +118,7 @@ class _PlayerScreenState extends State<PlayerScreen> {
                           leading: CircleAvatar(
                             backgroundColor: isCurrent
                                 ? AppColors.celestialGold
-                                : AppColors.celestialGold.withOpacity(0.15),
+                                : AppColors.celestialGold.withValues(alpha: 0.15),
                             child: isCurrent
                                 ? const Icon(Icons.equalizer_rounded, color: AppColors.primaryNavy, size: 20)
                                 : Text(
