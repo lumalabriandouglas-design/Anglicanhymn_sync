@@ -5,15 +5,11 @@ import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/hymn_audio.dart';
 import '../../../core/constants/pro_features.dart';
-import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
-import '../../../providers/audio_provider.dart';
 import '../../../providers/billing_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
-import '../../player/widgets/player_deck.dart';
 import '../widgets/dual_lyrics_view.dart';
 import '../widgets/lyric_report_dialog.dart';
 
@@ -89,10 +85,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final hymnProvider = context.watch<HymnProvider>();
-    final audioProvider = context.watch<AudioProvider>();
     final billing = context.watch<BillingProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final hasAudio = HymnAudio.hasAudio(widget.hymn);
     final canAutoScroll = billing.canUse(ListeningFeature.autoScroll);
 
     final cleanTitle = widget.hymn.title
@@ -200,93 +194,49 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               scrollController: _scrollController,
             ),
           ),
-          Container(
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.cardNavy : Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                  blurRadius: 10,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                children: [
-                  if (canAutoScroll) ...[
-                    Container(
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? AppColors.celestialGold.withValues(alpha: 0.15)
-                          : AppColors.celestialGold.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: IconButton(
-                      tooltip: _isAutoScrolling
-                          ? 'Stop auto-scroll'
-                          : 'Auto-scroll lyrics',
-                      icon: Icon(
-                        _isAutoScrolling
-                            ? Icons.pause_rounded
-                            : Icons.unfold_more_rounded,
-                        color: isDark ? AppColors.celestialGold : AppColors.primaryNavy,
-                      ),
-                      onPressed: _toggleAutoScroll,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  ],
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: hasAudio
-                            ? AppColors.celestialGold
-                            : (isDark ? Colors.white12 : Colors.grey.shade300),
-                        foregroundColor: hasAudio
-                            ? AppColors.primaryNavy
-                            : (isDark ? Colors.white54 : Colors.grey.shade600),
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      icon: Icon(
-                        hasAudio
-                            ? Icons.play_arrow_rounded
-                            : Icons.hourglass_empty_rounded,
-                        size: 22,
-                      ),
-                      label: Text(
-                        hasAudio ? 'Play Audio' : 'Audio coming soon',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 15,
-                        ),
-                      ),
-                      onPressed: hasAudio
-                          ? () {
-                              audioProvider.setHymns(hymnProvider.allHymns);
-                              audioProvider.playHymn(
-                                widget.hymn,
-                                language: settings.lyricsLanguage,
-                              );
-                              AppNav.push(
-                                context,
-                                const PlayerDeck(),
-                                fullscreenDialog: true,
-                              );
-                            }
-                          : null,
-                    ),
+          if (canAutoScroll)
+            Container(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.cardNavy : Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                    blurRadius: 10,
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor:
+                          isDark ? AppColors.celestialGold : AppColors.primaryNavy,
+                      side: BorderSide(
+                        color: AppColors.celestialGold.withValues(alpha: 0.6),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    icon: Icon(
+                      _isAutoScrolling
+                          ? Icons.pause_rounded
+                          : Icons.unfold_more_rounded,
+                    ),
+                    label: Text(
+                      _isAutoScrolling ? 'Stop auto-scroll' : 'Auto-scroll lyrics',
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                    ),
+                    onPressed: _toggleAutoScroll,
+                  ),
+                ),
+              ),
             ),
-          ),
         ],
       ),
     );

@@ -6,7 +6,6 @@ class Hymn {
   final String titleEnglish;
   final String lyricsLuganda;
   final String lyricsEnglish;
-  final String? audioUrl;
   bool isFavorite;
 
   Hymn({
@@ -15,7 +14,6 @@ class Hymn {
     this.titleEnglish = '',
     required this.lyricsLuganda,
     this.lyricsEnglish = '',
-    this.audioUrl,
     this.isFavorite = false,
   });
 
@@ -33,7 +31,6 @@ class Hymn {
       titleEnglish: titleEnglish ?? this.titleEnglish,
       lyricsLuganda: lyricsLuganda,
       lyricsEnglish: lyricsEnglish ?? this.lyricsEnglish,
-      audioUrl: audioUrl,
       isFavorite: isFavorite ?? this.isFavorite,
     );
   }
@@ -57,7 +54,6 @@ class Hymn {
       titleEnglish: englishTitle,
       lyricsLuganda: cleanHymnLyrics(rawLuganda),
       lyricsEnglish: cleanHymnLyrics(rawEnglish),
-      audioUrl: json['audioUrl'] ?? json['audio_url'],
     );
   }
 
@@ -68,7 +64,6 @@ class Hymn {
       'titleEnglish': titleEnglish,
       'lyrics': lyricsLuganda,
       'lyricsEnglish': lyricsEnglish,
-      'audioUrl': audioUrl,
     };
   }
 }

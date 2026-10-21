@@ -3,9 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/app_nav.dart';
-import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
-import '../../../providers/settings_provider.dart';
 import '../../library/widgets/hymn_tile.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
 
@@ -15,8 +13,6 @@ class FavoritesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hymnProvider = context.watch<HymnProvider>();
-    final audioProvider = context.watch<AudioProvider>();
-    final settings = context.watch<SettingsProvider>();
     final favorites = hymnProvider.favoriteHymns;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final titleColor = isDark ? AppColors.textWhite : AppColors.lightTextPrimary;
@@ -58,13 +54,6 @@ class FavoritesScreen extends StatelessWidget {
         final hymn = favorites[index];
         return HymnTile(
           hymn: hymn,
-          onPlayTap: () {
-            audioProvider.setHymns(hymnProvider.allHymns);
-            audioProvider.playHymn(
-              hymn,
-              language: settings.lyricsLanguage,
-            );
-          },
           onTap: () {
             AppNav.push(context, HymnDetailScreen(hymn: hymn));
           },
