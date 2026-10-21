@@ -3,9 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/widgets/breakpoints.dart';
-import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
-import '../../../providers/settings_provider.dart';
 import '../widgets/collapsing_search_bar.dart';
 import '../widgets/hymn_tile.dart';
 
@@ -28,8 +26,6 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   Widget build(BuildContext context) {
     final hymnProvider = context.watch<HymnProvider>();
-    final audioProvider = context.watch<AudioProvider>();
-    final settings = context.watch<SettingsProvider>();
     final hymns = hymnProvider.filteredHymns;
     final columns = Breakpoints.libraryColumns(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -84,16 +80,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       itemCount: hymns.length,
                       itemBuilder: (context, index) {
                         final hymn = hymns[index];
-                        return HymnTile(
-                          hymn: hymn,
-                          onPlayTap: () {
-                            audioProvider.setHymns(hymnProvider.allHymns);
-                            audioProvider.playHymn(
-                              hymn,
-                              language: settings.lyricsLanguage,
-                            );
-                          },
-                        );
+                        return HymnTile(hymn: hymn);
                       },
                     )
                   : GridView.builder(
@@ -108,16 +95,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
                       itemCount: hymns.length,
                       itemBuilder: (context, index) {
                         final hymn = hymns[index];
-                        return HymnTile(
-                          hymn: hymn,
-                          onPlayTap: () {
-                            audioProvider.setHymns(hymnProvider.allHymns);
-                            audioProvider.playHymn(
-                              hymn,
-                              language: settings.lyricsLanguage,
-                            );
-                          },
-                        );
+                        return HymnTile(hymn: hymn);
                       },
                     ),
         ),

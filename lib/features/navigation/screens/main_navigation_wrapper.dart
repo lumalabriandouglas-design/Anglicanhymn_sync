@@ -4,12 +4,9 @@ import 'package:provider/provider.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../core/widgets/breakpoints.dart';
 import '../../../core/widgets/responsive_center.dart';
-import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../favorites/screens/favorites_screen.dart';
 import '../../library/screens/library_screen.dart';
-import '../../player/screens/player_screen.dart';
-import '../../player/widgets/slim_mini_player.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
 import '../../steward/steward_screen.dart';
 import '../widgets/more_bottom_sheet.dart';
@@ -26,7 +23,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
 
   final List<Widget> _screens = const [
     LibraryScreen(),
-    PlayerScreen(),
     FavoritesScreen(),
   ];
 
@@ -39,9 +35,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    final audio = context.watch<AudioProvider>();
     final selected = context.watch<HymnProvider>().selectedHymn;
-    final hasPlayer = audio.currentHymn != null;
     final wide = Breakpoints.useRail(context);
     final padding = MediaQuery.paddingOf(context);
     final showReader = wide && _currentIndex == 0 && selected != null;
@@ -67,11 +61,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
                 icon: Icon(Icons.menu_book_outlined),
                 selectedIcon: Icon(Icons.menu_book_rounded),
                 label: Text('Library'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.headphones_outlined),
-                selectedIcon: Icon(Icons.headphones_rounded),
-                label: Text('Player'),
               ),
               NavigationRailDestination(
                 icon: Icon(Icons.favorite_outline_rounded),
@@ -120,7 +109,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       bottomNavigationBar: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (hasPlayer) const SlimMiniPlayer(),
           if (!wide)
             BottomNavigationBar(
               currentIndex: _currentIndex,
@@ -129,10 +117,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
                 BottomNavigationBarItem(
                   icon: Icon(Icons.menu_book_rounded),
                   label: 'Library',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.headphones_rounded),
-                  label: 'Player',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.favorite_rounded),

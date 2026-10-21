@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/hymn_audio.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../models/hymn.dart';
 import '../../../models/service_setlist.dart';
-import '../../../providers/audio_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/setlist_provider.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
@@ -38,7 +36,6 @@ class SetlistDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = context.watch<SetlistProvider>();
     final hymns = context.watch<HymnProvider>();
-    final audio = context.watch<AudioProvider>();
     final setlist = provider.byId(setlistId);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -52,28 +49,6 @@ class SetlistDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(setlist.title),
-        actions: [
-          if (setlist.items.isNotEmpty)
-            IconButton(
-              tooltip: 'Play available audio in order',
-              icon: const Icon(Icons.playlist_play_rounded),
-              onPressed: () {
-                final playable = setlist.items
-                    .map((i) => _findHymn(hymns, i.hymnNumber))
-                    .whereType<Hymn>()
-                    .where(HymnAudio.hasAudio)
-                    .toList();
-                if (playable.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('No audio in this setlist yet')),
-                  );
-                  return;
-                }
-                audio.setHymns(playable);
-                audio.playHymn(playable.first);
-              },
-            ),
-        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: AppColors.celestialGold,
@@ -116,7 +91,6 @@ class SetlistDetailScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final item = setlist.items[index];
                 final hymn = _findHymn(hymns, item.hymnNumber);
-                final hasAudio = hymn != null && HymnAudio.hasAudio(hymn);
 
                 return Card(
                   key: ValueKey('${item.hymnNumber}-$index-${item.role}'),
@@ -151,14 +125,6 @@ class SetlistDetailScreen extends StatelessWidget {
                               .toList(),
                           child: const Icon(Icons.label_outline_rounded),
                         ),
-                        if (hasAudio)
-                          IconButton(
-                            icon: const Icon(Icons.play_arrow_rounded),
-                            onPressed: () {
-                              audio.setHymns(hymns.allHymns);
-                              audio.playHymn(hymn);
-                            },
-                          ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                           onPressed: () => provider.removeItem(setlistId, index),

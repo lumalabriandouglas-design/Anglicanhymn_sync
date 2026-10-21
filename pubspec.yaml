@@ -1,7 +1,7 @@
 name: anglican_hymn_sync
 description: "A modern Anglican Hymnal App"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+2
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -11,12 +11,9 @@ dependencies:
     sdk: flutter
   provider: ^6.1.2
   shared_preferences: ^2.2.2
-  just_audio: ^0.9.36
-  audio_service: ^0.18.12
   google_fonts: ^6.1.0
   wakelock_plus: ^1.1.4
   mobile_scanner: ^6.0.0
-  http: ^1.2.2
   url_launcher: ^6.3.1
 
 dev_dependencies:
@@ -40,7 +37,6 @@ flutter:
   uses-material-design: true
   assets:
     - assets/hymns-full.json
-    - assets/audio-catalogue.json
     - assets/english-overlay.json
     - assets/billing.json
     - assets/images/app_icon.png

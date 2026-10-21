@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import '../core/constants/hymn_audio.dart';
 import '../core/services/storage_service.dart';
 import '../core/utils/search_engine.dart';
 import '../models/hymn.dart';
@@ -14,7 +13,6 @@ class HymnProvider extends ChangeNotifier {
   String _searchQuery = '';
   bool _isLoading = true;
   String? _errorMessage;
-  bool _audioCatalogueReady = false;
   bool _englishOnly = false;
   Hymn? _selectedHymn;
 
@@ -24,7 +22,6 @@ class HymnProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   List<Hymn> get allHymns => _allHymns;
   String get searchQuery => _searchQuery;
-  bool get audioCatalogueReady => _audioCatalogueReady;
   bool get englishOnly => _englishOnly;
   Hymn? get selectedHymn => _selectedHymn;
   int get englishCount =>
@@ -49,8 +46,6 @@ class HymnProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await HymnAudio.loadLocal(_storageService);
-
       final String jsonString =
           await rootBundle.loadString('assets/hymns-full.json');
       final List<dynamic> data = json.decode(jsonString);
@@ -96,12 +91,6 @@ class HymnProvider extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-
-    // Do not block the hymn book on the network.
-    final updated = await HymnAudio.refreshFromRemote(_storageService);
-    _audioCatalogueReady =
-        HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
-    if (updated) notifyListeners();
   }
 
   Hymn _correctEnglish(Hymn hymn) {
@@ -109,13 +98,6 @@ class HymnProvider extends ChangeNotifier {
       return hymn.copyWith(titleEnglish: '', lyricsEnglish: '');
     }
     return hymn;
-  }
-
-  Future<void> refreshAudioCatalogue() async {
-    final updated = await HymnAudio.refreshFromRemote(_storageService);
-    _audioCatalogueReady =
-        HymnAudio.loadedFromRemote || HymnAudio.tracks.isNotEmpty;
-    if (updated) notifyListeners();
   }
 
   void setSearchQuery(String query) {

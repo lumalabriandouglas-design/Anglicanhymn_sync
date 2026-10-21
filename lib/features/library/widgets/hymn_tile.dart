@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/hymn_audio.dart';
 import '../../../core/widgets/app_nav.dart';
 import '../../../core/widgets/breakpoints.dart';
 import '../../../models/hymn.dart';
@@ -12,13 +11,11 @@ import '../../reader/screens/hymn_detail_screen.dart';
 class HymnTile extends StatelessWidget {
   final Hymn hymn;
   final VoidCallback? onTap;
-  final VoidCallback? onPlayTap;
 
   const HymnTile({
     super.key,
     required this.hymn,
     this.onTap,
-    this.onPlayTap,
   });
 
   void _openHymn(BuildContext context) {
@@ -159,19 +156,7 @@ class HymnTile extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (HymnAudio.hasAudio(hymn))
-                  IconButton(
-                    icon: Icon(
-                      Icons.play_circle_outline_rounded,
-                      color: isDark
-                          ? AppColors.celestialGold
-                          : AppColors.primaryNavy,
-                      size: 28,
-                    ),
-                    onPressed: onPlayTap,
-                  )
-                else
-                  const SizedBox(width: 8),
+                const SizedBox(width: 8),
               ],
             ),
           ),
