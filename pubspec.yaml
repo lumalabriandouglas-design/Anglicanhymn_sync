@@ -1,7 +1,7 @@
 name: anglican_hymn_sync
 description: "A modern Anglican Hymnal App"
 publish_to: 'none'
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -13,7 +13,6 @@ dependencies:
   shared_preferences: ^2.2.2
   google_fonts: ^6.1.0
   wakelock_plus: ^1.1.4
-  mobile_scanner: ^6.0.0
   url_launcher: ^6.3.1
 
 dev_dependencies:
