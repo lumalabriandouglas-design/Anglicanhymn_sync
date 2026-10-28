@@ -5,9 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/pro_features.dart';
 import '../../../models/hymn.dart';
-import '../../../providers/billing_provider.dart';
 import '../../../providers/hymn_provider.dart';
 import '../../../providers/settings_provider.dart';
 import '../widgets/dual_lyrics_view.dart';
@@ -64,7 +62,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     });
 
     if (_isAutoScrolling) {
-      _autoScrollTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      _autoScrollTimer =
+          Timer.periodic(const Duration(milliseconds: 100), (timer) {
         if (_scrollController.hasClients) {
           final maxScroll = _scrollController.position.maxScrollExtent;
           final currentScroll = _scrollController.position.pixels;
@@ -85,9 +84,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final hymnProvider = context.watch<HymnProvider>();
-    final billing = context.watch<BillingProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canAutoScroll = billing.canUse(ListeningFeature.autoScroll);
 
     final cleanTitle = widget.hymn.title
         .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')
@@ -126,7 +123,9 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final actions = [
       IconButton(
         icon: Icon(
-          widget.hymn.isFavorite ? Icons.favorite_rounded : Icons.favorite_outline_rounded,
+          widget.hymn.isFavorite
+              ? Icons.favorite_rounded
+              : Icons.favorite_outline_rounded,
           color: widget.hymn.isFavorite
               ? Colors.redAccent
               : (isDark ? AppColors.textWhite : AppColors.primaryNavy),
@@ -151,7 +150,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.primaryNavy : AppColors.lightBackground,
+      backgroundColor:
+          isDark ? AppColors.primaryNavy : AppColors.lightBackground,
       appBar: widget.embedded
           ? null
           : AppBar(
@@ -174,7 +174,8 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
                     tooltip: 'Close reader',
                     icon: Icon(
                       Icons.close_rounded,
-                      color: isDark ? AppColors.textWhite : AppColors.primaryNavy,
+                      color:
+                          isDark ? AppColors.textWhite : AppColors.primaryNavy,
                     ),
                     onPressed: () => hymnProvider.selectHymn(null),
                   ),
@@ -183,7 +184,9 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
             ),
           Container(
             height: 1,
-            color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.grey.withValues(alpha: 0.15),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : Colors.grey.withValues(alpha: 0.15),
           ),
           Expanded(
             child: DualLyricsView(
@@ -194,49 +197,52 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
               scrollController: _scrollController,
             ),
           ),
-          if (canAutoScroll)
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.cardNavy : Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
-                    blurRadius: 10,
-                    offset: const Offset(0, -2),
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 16),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.cardNavy : Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
+                  blurRadius: 10,
+                  offset: const Offset(0, -2),
+                ),
+              ],
+            ),
+            child: SafeArea(
+              top: false,
+              child: SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: isDark
+                        ? AppColors.celestialGold
+                        : AppColors.primaryNavy,
+                    side: BorderSide(
+                      color: AppColors.celestialGold.withValues(alpha: 0.6),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                ],
-              ),
-              child: SafeArea(
-                top: false,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor:
-                          isDark ? AppColors.celestialGold : AppColors.primaryNavy,
-                      side: BorderSide(
-                        color: AppColors.celestialGold.withValues(alpha: 0.6),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    icon: Icon(
-                      _isAutoScrolling
-                          ? Icons.pause_rounded
-                          : Icons.unfold_more_rounded,
-                    ),
-                    label: Text(
-                      _isAutoScrolling ? 'Stop auto-scroll' : 'Auto-scroll lyrics',
-                      style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
-                    ),
-                    onPressed: _toggleAutoScroll,
+                  icon: Icon(
+                    _isAutoScrolling
+                        ? Icons.pause_rounded
+                        : Icons.unfold_more_rounded,
                   ),
+                  label: Text(
+                    _isAutoScrolling
+                        ? 'Stop auto-scroll'
+                        : 'Auto-scroll lyrics',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 15),
+                  ),
+                  onPressed: _toggleAutoScroll,
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
