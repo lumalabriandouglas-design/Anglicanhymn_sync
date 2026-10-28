@@ -1,8 +1,4 @@
-enum ListeningFeature {
-  playAudio,
-  shuffleRepeat,
-  playbackSpeed,
-  sleepTimer,
+enum ReaderFeature {
   autoScroll,
 }
 
@@ -17,15 +13,10 @@ class ProFeatures {
 
   static const String codeSecret = 'ahs-plus-1977';
 
-  static bool canUse(ListeningFeature feature, {required bool plusActive}) {
+  static bool canUse(ReaderFeature feature, {required bool plusActive}) {
     if (unlockedForEveryone || plusActive) return true;
     switch (feature) {
-      case ListeningFeature.playAudio:
-      case ListeningFeature.shuffleRepeat:
-        return true;
-      case ListeningFeature.playbackSpeed:
-      case ListeningFeature.sleepTimer:
-      case ListeningFeature.autoScroll:
+      case ReaderFeature.autoScroll:
         return false;
     }
   }

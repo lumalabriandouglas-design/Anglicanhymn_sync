@@ -51,8 +51,8 @@ class BillingService {
             ]
           : numbers,
       plans: config.plans,
-      freeListening: config.freeListening,
-      plusListening: config.plusListening,
+      freeFeatures: config.freeFeatures,
+      plusFeatures: config.plusFeatures,
     );
   }
 

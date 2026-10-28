@@ -212,7 +212,7 @@ class _PayInTabState extends State<_PayInTab> {
           child: const Text('Save numbers'),
         ),
         const SizedBox(height: 28),
-        const Text('How a listener will pay', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+        const Text('How a reader will pay', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
         const SizedBox(height: 8),
         _PaymentPreview(config: config),
       ],
@@ -519,14 +519,14 @@ class _PlansTab extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 40),
       children: [
         const Text(
-          'Two listening plans, like a free and a paid music app. The public book does not show this split while everything is free.',
+          'Two reader plans: a free hymn book and Plus. The public book does not show this split while everything is free.',
           style: TextStyle(height: 1.4),
         ),
         const SizedBox(height: 16),
         _PlanCard(
-          title: 'Listener',
+          title: 'Reader',
           subtitle: 'Free',
-          items: config.freeListening,
+          items: config.freeFeatures,
         ),
         const SizedBox(height: 12),
         _PlanCard(
@@ -534,13 +534,13 @@ class _PlansTab extends StatelessWidget {
           subtitle: config.plans
               .map((p) => '${p.name} ${BillingService.formatAmount(p.amount, config.currency)}')
               .join(' · '),
-          items: [...config.freeListening, ...config.plusListening],
+          items: [...config.freeFeatures, ...config.plusFeatures],
           plus: true,
         ),
         const SizedBox(height: 20),
         Text(
           billing.allOpen
-              ? 'Right now every listener gets Plus tools: speed, sleep timer, auto-scroll, shuffle, repeat, queue, Luganda/English audio.'
+              ? 'Right now every reader gets Plus tools, including hands-free lyric auto-scroll.'
               : 'The wall is on. Plus tools wait for an activated code.',
           style: const TextStyle(height: 1.4),
         ),

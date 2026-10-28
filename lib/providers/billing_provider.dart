@@ -25,7 +25,7 @@ class BillingProvider extends ChangeNotifier {
 
   bool get allOpen => ProFeatures.unlockedForEveryone;
 
-  bool canUse(ListeningFeature feature) =>
+  bool canUse(ReaderFeature feature) =>
       ProFeatures.canUse(feature, plusActive: plusActive);
 
   Future<void> _load() async {

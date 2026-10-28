@@ -4,8 +4,14 @@
   "currency": "UGX",
   "whatsapp": "",
   "numbers": [
-    { "network": "MTN", "number": "" },
-    { "network": "Airtel", "number": "" }
+    {
+      "network": "MTN",
+      "number": ""
+    },
+    {
+      "network": "Airtel",
+      "number": ""
+    }
   ],
   "plans": [
     {
@@ -21,15 +27,13 @@
       "days": 366
     }
   ],
-  "freeListening": [
-    "Play hymn audio",
-    "Luganda or English recording",
-    "Shuffle, repeat, skip, queue",
-    "Volume and seek"
+  "freeFeatures": [
+    "Full Luganda and English hymn book",
+    "Search by number, title or words",
+    "Favourites and setlists",
+    "Works offline"
   ],
-  "plusListening": [
-    "Playback speed 0.75x to 1.5x",
-    "Sleep timer",
+  "plusFeatures": [
     "Hands-free lyric auto-scroll"
   ]
 }

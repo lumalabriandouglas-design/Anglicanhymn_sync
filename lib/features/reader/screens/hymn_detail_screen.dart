@@ -87,7 +87,7 @@ class _HymnDetailScreenState extends State<HymnDetailScreen> {
     final hymnProvider = context.watch<HymnProvider>();
     final billing = context.watch<BillingProvider>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final canAutoScroll = billing.canUse(ListeningFeature.autoScroll);
+    final canAutoScroll = billing.canUse(ReaderFeature.autoScroll);
 
     final cleanTitle = widget.hymn.title
         .replaceAll(RegExp(r'^OLUYIMBA\s+\d+:\s*', caseSensitive: false), '')

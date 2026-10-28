@@ -103,16 +103,16 @@ class BillingConfig {
   final String whatsapp;
   final List<PayNumber> numbers;
   final List<BillingPlan> plans;
-  final List<String> freeListening;
-  final List<String> plusListening;
+  final List<String> freeFeatures;
+  final List<String> plusFeatures;
 
   const BillingConfig({
     required this.currency,
     required this.whatsapp,
     required this.numbers,
     required this.plans,
-    required this.freeListening,
-    required this.plusListening,
+    required this.freeFeatures,
+    required this.plusFeatures,
   });
 
   factory BillingConfig.fromJson(Map<String, dynamic> json) {
@@ -127,10 +127,10 @@ class BillingConfig {
           .whereType<Map>()
           .map((e) => BillingPlan.fromJson(Map<String, dynamic>.from(e)))
           .toList(),
-      freeListening: (json['freeListening'] as List<dynamic>? ?? [])
+      freeFeatures: (json['freeFeatures'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
-      plusListening: (json['plusListening'] as List<dynamic>? ?? [])
+      plusFeatures: (json['plusFeatures'] as List<dynamic>? ?? [])
           .map((e) => e.toString())
           .toList(),
     );

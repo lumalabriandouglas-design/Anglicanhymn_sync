@@ -46,8 +46,9 @@ android {
 
     buildTypes {
         release {
-            // Uses android/key.properties (gitignored). Falls back to debug keys if it's missing.
-            signingConfig = if (keystorePropertiesFile.exists()) signingConfigs.getByName("release") else signingConfigs.getByName("debug")
+            // Always signs with the upload key from android/key.properties (gitignored).
+            // Release builds fail without it rather than silently using debug keys.
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
