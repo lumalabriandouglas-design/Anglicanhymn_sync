@@ -8,7 +8,6 @@ import '../../../providers/hymn_provider.dart';
 import '../../favorites/screens/favorites_screen.dart';
 import '../../library/screens/library_screen.dart';
 import '../../reader/screens/hymn_detail_screen.dart';
-import '../../steward/steward_screen.dart';
 import '../widgets/more_bottom_sheet.dart';
 
 class MainNavigationWrapper extends StatefulWidget {
@@ -101,7 +100,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             icon: const Icon(Icons.tune_rounded),
             tooltip: 'Settings & Tools',
             onPressed: _openSettings,
-            onLongPress: () => openStewardWall(context),
           ),
         ],
       ),

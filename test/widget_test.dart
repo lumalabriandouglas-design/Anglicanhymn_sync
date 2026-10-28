@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:anglican_hymn_sync/models/billing.dart';
 import 'package:anglican_hymn_sync/models/hymn.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,14 +16,6 @@ void main() {
         .toList();
     expect(hymns.length, data.length);
     expect(hymns.first.number, isNotEmpty);
-  });
-
-  test('billing config parses and stays free for everyone', () {
-    final raw = json.decode(File('assets/billing.json').readAsStringSync())
-        as Map<String, dynamic>;
-    final config = BillingConfig.fromJson(raw);
-    expect(config.plans, isNotEmpty);
-    expect(raw['unlockedForEveryone'], isTrue);
   });
 
   test('both translations load: Luganda for every hymn, English for many', () {

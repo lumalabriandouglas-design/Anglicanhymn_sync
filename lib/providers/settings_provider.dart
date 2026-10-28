@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../core/constants/pro_features.dart';
 import '../core/services/storage_service.dart';
 
 enum AppThemeMode { light, dark, system }
@@ -25,9 +24,6 @@ class SettingsProvider extends ChangeNotifier {
   AppThemeMode get themeMode => _themeMode;
   LyricsLanguage get lyricsLanguage => _lyricsLanguage;
   double get fontSize => _fontSize;
-
-  /// Public listeners keep every tool while the book is free.
-  bool get isProUser => ProFeatures.unlockedForEveryone;
 
   bool get isDarkMode => _themeMode == AppThemeMode.dark;
 
